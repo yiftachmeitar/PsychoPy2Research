@@ -1,0 +1,11 @@
+
+### Page 1 ###
++There will be a scale on the screen at all times that you can move to indicate how anxious you are feeling at any point.\n\nIt is really important that you update the scale constantly throughout the experiment so that we know how you are feeling at all times.
+-Press any button to continue.
+### Page 2 ###
++Anytime you see the word "SAFE" on the screen the thermode will not deliver any heat at all.
+-Press any button to continue.
+### Page 3 ###
++If you have any questions, please ask the experimenter now. If you need to review these instructions, press 'r'.
+-Press any other button to continue.
+

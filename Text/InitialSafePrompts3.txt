@@ -1,0 +1,4 @@
+### Page 1 ###
++Before the square starts growing, "GET READY" will appear on the screen.
+-Press any other button to continue.
+

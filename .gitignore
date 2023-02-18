@@ -1,0 +1,30 @@
+# Compiled files
+*.pyc
+
+# Experimental log files:
+*.log
+
+# Parameter files
+*.pickle
+*.psydat
+
+# big files
+*.mp4
+*.mov
+*.jpg
+img/**
+
+
+# hidden files
+._*
+.DS_Store
+
+# PsychoPy Builder Demos
+PsychoPyBuilderDemos
+# Pycharm generated files:
+__pycache__
+.idea
+.ipynb_checkpoints
+
+*.zip
+*.edf

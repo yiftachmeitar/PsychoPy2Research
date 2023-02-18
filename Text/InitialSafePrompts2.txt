@@ -1,0 +1,3 @@
+### Page 1 ###
++Anytime you see the word "SAFE" on the screen the thermode will not deliver any heat at all.
+-Press any button to continue.

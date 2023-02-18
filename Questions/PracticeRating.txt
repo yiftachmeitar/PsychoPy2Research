@@ -1,0 +1,39 @@
+### QUESTION 1: Anxiety
+? QUESTION 1
+-Not anxious
+-
+-
+-
+-Very anxious
+
+### QUESTION 2: Nervous
+? QUESTION 2
+-Not anxious
+-
+-
+-
+-Very anxious
+
+### QUESTION 3: Calm
+? QUESTION 3
+-Not anxious
+-
+-
+-
+-Very anxious
+
+### QUESTION 4: Average
+? QUESTION 4
+-Not anxious
+-
+-
+-
+-Very anxious
+
+### QUESTION 5: Anxiety2
+? QUESTION 5
+-Not anxious
+-
+-
+-
+-Very anxious

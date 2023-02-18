@@ -1,0 +1,4 @@
+### Page 1 ###
++You are about to see a set of growing squares of a certain color.
+\n\nWhen the color fills up the screen you will feel the heat pain on your arm.
+-Press any button to continue and see an example.
