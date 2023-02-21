@@ -349,7 +349,7 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     fixationCross.draw()
     WaitForFlipTime()
     # gray color = during the instructions
-    if col is not 'gray':
+    if col != 'gray':
         SetPort(color, 1, block)
     fixation.autoDraw = False
     win.flip()
@@ -382,12 +382,12 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         # if R != Rbefore:
         Rbefore = R
 
-        if col is not 'gray':
+        if col != 'gray':
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "square",
                       globalClock.getTime() - phaseStart, ratings.getRating())
         ++i
 
-    if col is not 'gray':
+    if col != 'gray':
         # print(time.time())
         SetPort(color, 2, block)
         phaseStart = globalClock.getTime()
