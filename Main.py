@@ -44,9 +44,7 @@ params = {
     'screenIdx': 0,
     'nTrials': 8,  # number of squares in each block
     'nBlocks': 5,  # number of blocks (aka runs) - need time to move electrode in between
-    'stimDur': 4,  # time when stimulus is presented (in seconds)
-    'painDur': 10,  # time of heat sensation (in seconds)
-    'ISI': 0,  # time between when one stimulus disappears and the next appears (in seconds)
+    'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
     'skipPrompts': False,  # go right to the task after vas and baseline
@@ -86,7 +84,6 @@ params = {
     'codeReady': 145,  # parallel port code for Get ready stimulus
     'codeVAS': 142,  # parallel port code for 3 VASs
     'convExcel': 'tempConv.xlsx',  # excel file with temp to binary code mappings
-
 }
 
 # save parameters
@@ -104,7 +101,7 @@ if saveParams:
 # ===== SET UP LOGGING ===== #
 # ========================== #
 
-scriptName = 'TIM_nomedoc.py'
+scriptName = 'Main.py'
 try:  # try to get a previous parameters file
     expInfo = fromFile('%s-lastExpInfo.psydat' % scriptName)
     expInfo['session'] += 1  # automatically increment session number
