@@ -77,7 +77,7 @@ params = {
     'fixCrossPos': [0, 0],  # (x,y) pos of fixation cross displayed before each stimulus (for gaze drift correction)
     'screenColor': (217, 217, 217),  # in rgb255 space: (r,g,b) all between 0 and 255 - light grey
     # parallel port parameters
-    'sendPortEvents': True,  # send event markers to biopac computer via parallel port
+    'sendPortEvents': False,  # send event markers to biopac computer via parallel port
     'portAddress': 0xE050,  # 0xE050,  0x0378,  address of parallel port
     'codeBaseline': 144,  # parallel port code for baseline period
     'codeFixation': 143,  # parallel port code for fixation period - safe
@@ -109,7 +109,7 @@ try:  # try to get a previous parameters file
     expInfo['LHeat'] = 36.0
     expInfo['MHeat'] = 41.0
     expInfo['HHeat'] = 46.0
-    expInfo['painSupport'] = True
+    expInfo['painSupport'] = False
     # expInfo['practiceMoodScale'] = False
 except:  # if not there then use a default set
     expInfo = {
@@ -199,6 +199,9 @@ if params['painSupport']:
 # ===== SET UP STIMULI ===== #
 # ========================== #
 from psychopy import visual
+
+#Initializing screen Resolution
+screenRes = [1024,768]
 
 # Initialize deadline for displaying next frame
 tNextFlip = [0.0]  # put in a list to make it mutable (weird quirk of python variables)
