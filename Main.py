@@ -17,22 +17,16 @@
 # ====================================== #
 from psychopy import core, gui, data, event, sound, logging
 import pandas as pd
-# from psychopy import visual # visual causes a bug in the guis, so it's declared after all GUIs run.
 from psychopy.tools.filetools import fromFile, toFile  # saving and loading parameter files
 import time as ts, numpy as np  # for timing and array operations
-from scipy.integrate import simps
 from numpy import trapz
-import os, glob
-# import AppKit, os, glob # for monitor size detection, files - could not import on windows
+import os
 import BasicPromptTools  # for loading/presenting prompts and questions
 import RatingScales
 import random  # for randomization of trials
-import string
 import math
-import socket
-import devices
 from devices import Pathway
-from EyeTrackerCalibration import EyeTrackerCalibration, eyeLinkFinishRecording
+# from psychopy import visual # visual causes a bug in the guis, so it's declared after all GUIs run.
 
 # ====================== #
 # ===== PARAMETERS ===== #
