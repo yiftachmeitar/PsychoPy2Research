@@ -131,7 +131,7 @@ if saveParams:
 # present a dialogue to change select params
 # dlg = gui.DlgFromDict(expInfo, title=scriptName,
 #                       order=['subject', 'session', 'LHeat', 'MHeat', 'HHeat', 'skipPrompts', 'paramsFile'])
-dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','Version','LHeat','MHeat','HHeat',
+dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat',
                                                         # 'skipPrompts','painSupport','practiceMoodScale','paramsFile'])
 'skipPrompts','painSupport','paramsFile'])
 if not dlg.OK:
