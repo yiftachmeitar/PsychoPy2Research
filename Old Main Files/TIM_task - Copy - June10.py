@@ -56,6 +56,7 @@ params = {
     'skipPrompts': False,     # go right to the task after vas and baseline
     'promptDir': 'Text/',     # directory containing prompts and questions files
     'promptFile': 'HeatAnticipationPrompts.txt', # Name of text file containing prompts
+    'initialpromptFile': 'InitialSafePrompts.txt', # explain "safe" and "get ready" before the practice
     'questionFile': 'Text/AnxietyScale.txt', # Name of text file containing Q&As
     'questionDownKey': '1',   # move slider left
     'questionUpKey':'2',      # move slider right
@@ -248,6 +249,12 @@ random.shuffle(painISI)
 # read questions and answers from text files for instructions text, 3 Vass, and practice scale questions
 [topPrompts,bottomPrompts] = BasicPromptTools.ParsePromptFile(params['promptDir']+params['promptFile'])
 print('%d prompts loaded from %s'%(len(topPrompts),params['promptFile']))
+
+
+[topPrompts0,bottomPrompts0] = BasicPromptTools.ParsePromptFile(params['promptDir']+params['initialpromptFile'])
+print('%d prompts loaded from %s'%(len(topPrompts0),params['initialpromptFile']))
+
+
 
 [questions_vas1,options_vas1,answers_vas1] = BasicPromptTools.ParseQuestionFile(params['moodQuestionFile1'])
 print('%d questions loaded from %s'%(len(questions_vas1),params['moodQuestionFile1']))
@@ -976,7 +983,10 @@ def RunPrompts():
 
         # display prompts
     if not params['skipPrompts']:
-        BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
+        
+        BasicPromptTools.RunPrompts(topPrompts0,bottomPrompts0,win,message1,message2)
+        
+        #BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
 
         tNextFlip[0] = globalClock.getTime() + 15
         fixation.autoDraw = True
@@ -1030,6 +1040,11 @@ def RunPrompts():
         thisKey = event.waitKeys() # use if need to repeat instructions
         if thisKey[0] == 'r':
             RunPrompts()
+            
+            
+        BasicPromptTools.RunPrompts(["We are about to start !"],["Press any button to continue"],win,message1,message2)
+    
+            
     tNextFlip[0] = globalClock.getTime() + 5.0
 
 # =========================== #
@@ -1112,7 +1127,7 @@ for block in range(0, params['nBlocks']):
 
 
     # Wait until it's time to display first stimulus
-    while (globalClock.getTime()<tNextFlip[0]):
+    while (globalClock.getTime()<tNextFlip[0]+4):
         # VAS AOI eyelink
         aoiTimeStart = time.time() * 1000
         R = anxSlider.getRating()
@@ -1221,6 +1236,11 @@ for block in range(0, params['nBlocks']):
         # GrowingSquare(color, block, trial, ratings, params)
 
         trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider,params,tracker)
+        # Delay 2 seconds (no AOI)
+        tracker.sendMessage('TRIAL_RESULT 0')
+        tracker.sendMessage('TRIALID %d' % 0)
+        win.flip()
+        core.wait(2)
 
         # Safe screen showed up (issue exists)
         tracker.sendMessage('TRIAL_RESULT 0')
@@ -1248,7 +1268,7 @@ for block in range(0, params['nBlocks']):
         aoiTimeStart = time.time() * 1000
         Rbefore = anxSlider.getRating()
         kk = 0
-        while (globalClock.getTime()<tNextFlip[0]):
+        while (globalClock.getTime()<tNextFlip[0]+4):
             R = anxSlider.getRating()
 
             # if kk == 0:
@@ -1386,9 +1406,9 @@ for block in range(0, params['nBlocks']):
             blockName = "123" if block == 2 else "456"
             outEDF = "EDF/" + filename + "_block" + blockName + ".edf"
             # eyeLinkFinishRecording(tracker, outEDF,io)
-            if not os.path.exists(".tmp"):
-                os.makedirs(".tmp")
-            with open(".tmp/output.txt", "w") as text_file:
+            if not os.path.exists("../.tmp"):
+                os.makedirs("../.tmp")
+            with open("../.tmp/output.txt", "w") as text_file:
                 text_file.write(outEDF)
             tracker.sendMessage('TRIAL_RESULT 0')
             tracker.setRecordingState(False)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+ #!/usr/bin/env python2
 """Display images from a specified folder and present them to the subject."""
 # GalbraithHeat2.py
 # Created 11/09/15 by DJ based on DistractionTask_practice_d3.py
@@ -9,7 +9,12 @@
 # Updated 8/20/20 by JG - created functions for output
 # Updated 8/31/20 by JG - changed visuals, added heat input, added VAS pre, mid, post, modified instructions to start over
 # Updated 3/1/22 by JG,LL - debugged growingsquare to work for practice
+# Updated 4/27/2022 by JG - took out version option and commented the h*ll out of it
 
+
+# ====================================== #
+# ===Import all the relevant packages=== #
+# ====================================== #
 from psychopy import core, gui, data, event, sound, logging
 import pandas as pd
 # from psychopy import visual # visual causes a bug in the guis, so it's declared after all GUIs run.
@@ -41,16 +46,17 @@ newParamsFilename = 'GalbraithHeatParams.psydat'
 params = {
 # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 8,            # number of trials in each block (sets of squares)
-    'nBlocks': 6,             # number of blocks - need time to move electrode in between
+    'nTrials': 8,            # number of squares in each block
+    'nBlocks': 6,             # number of blocks (aka runs) - need time to move electrode in between
     'stimDur': 4,             # time when stimulus is presented (in seconds)
     'painDur': 10,             # time of heat sensation (in seconds)
     'ISI': 0,                 # time between when one stimulus disappears and the next appears (in seconds)
     'tStartup': 5,            # pause time before starting first stimulus
 # declare prompt and question files
-    'skipPrompts': False,     # go right to the scanner-wait page
+    'skipPrompts': False,     # go right to the task after vas and baseline
     'promptDir': 'Text/',     # directory containing prompts and questions files
     'promptFile': 'HeatAnticipationPrompts.txt', # Name of text file containing prompts
+    'initialpromptFile': 'InitialSafePrompts.txt', # explain "safe" and "get ready" before the practice
     'questionFile': 'Text/AnxietyScale.txt', # Name of text file containing Q&As
     'questionDownKey': '1',   # move slider left
     'questionUpKey':'2',      # move slider right
@@ -79,12 +85,12 @@ params = {
     'codeBaseline': 144,     # parallel port code for baseline period
     'codeFixation': 143,     #parallel port code for fixation period - safe
     'codeReady': 145,     #parallel port code for Get ready stimulus
-    'codeVAS': 142,
+    'codeVAS': 142,    #parallel port code for 3 VASs
     'convExcel': 'tempConv.xlsx',  #excel file with temp to binary code mappings
 
 }
 
-# save parameters - isn't working on personal laptop
+# save parameters
 if saveParams:
     dlgResult = gui.fileSaveDlg(prompt='Save Params...',initFilePath = os.getcwd() + '/Params', initFileName = newParamsFilename,
         allowed="PICKLE files (.psydat)|.psydat|All files (.*)|")
@@ -97,14 +103,12 @@ if saveParams:
 # ========================== #
 # ===== SET UP LOGGING ===== #
 # ========================== #
-# scriptName = os.path.basename(__file__)
-# scriptName = os.path.splitext(scriptName)[0] #% remove extension/
+
 scriptName = 'TIM_nomedoc.py'
 try: # try to get a previous parameters file
     expInfo = fromFile('%s-lastExpInfo.psydat'%scriptName)
     expInfo['session'] +=1 # automatically increment session number
     expInfo['paramsFile'] = [expInfo['paramsFile'],'Load...']
-    expInfo['Version'] = 2
     expInfo['LHeat'] = 36.0
     expInfo['MHeat'] = 41.0
     expInfo['HHeat'] = 46.0
@@ -112,7 +116,6 @@ except: # if not there then use a default set
     expInfo = {
         'subject':'1',
         'session': 1,
-        'Version': 1,
         'LHeat': '36.0',
         'MHeat': '41.0',
         'HHeat': '46.0',
@@ -123,7 +126,7 @@ if saveParams:
     expInfo['paramsFile'] = [newParamsFilename,'Load...']
 
 #present a dialogue to change select params
-dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','Version','LHeat','MHeat','HHeat','skipPrompts','paramsFile'])
+dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat','skipPrompts','paramsFile'])
 if not dlg.OK:
     core.quit() # the user hit cancel, so exit
 
@@ -141,11 +144,6 @@ if expInfo['paramsFile'] not in ['DEFAULT', None]: # otherwise, just use default
 # transfer skipPrompts from expInfo (gui input) to params (logged parameters)
 params['skipPrompts'] = expInfo['skipPrompts']
 
-# print params to Output
-# print 'params = {'
-# for key in sorted(params.keys()):
-#     print "   '%s': %s"%(key,params[key]) # print each value as-is (no quotes)
-# print '}'
 
 # save experimental info
 toFile('%s-lastExpInfo.psydat'%scriptName, expInfo)#save params to file for next time
@@ -158,7 +156,6 @@ logging.log(level=logging.INFO, msg='---START PARAMETERS---')
 logging.log(level=logging.INFO, msg='filename: %s'%filename)
 logging.log(level=logging.INFO, msg='subject: %s'%expInfo['subject'])
 logging.log(level=logging.INFO, msg='session: %s'%expInfo['session'])
-logging.log(level=logging.INFO, msg='version: %s'%expInfo['Version'])
 logging.log(level=logging.INFO, msg='LHeat: %s'%expInfo['LHeat'])
 logging.log(level=logging.INFO, msg='MHeat: %s'%expInfo['MHeat'])
 logging.log(level=logging.INFO, msg='HHeat: %s'%expInfo['HHeat'])
@@ -178,19 +175,6 @@ def UserInputPlayTwoThree():
 inputEye = UserInputPlayTwoThree()
 params['Eye'] = inputEye[0]
 
-# ========================== #
-# ===== GET SCREEN RES ===== #
-# ========================== # can't use AppKit on windows
-
-# kluge for secondary monitor
-#if params['fullScreen']:
-#    screens = AppKit.NSScreen.screens()
-#    screenRes = (int(screens[params['screenToShow']].frame().size.width), int(screens[params['screenToShow']].frame().size.height))
-#    screenRes = [1920, 1200]
-#    if params['screenToShow']>0:
-#        params['fullScreen'] = False
-#else:
-#    screenRes = [800,600]
 
 screenRes = [1024,768]
 
@@ -207,6 +191,7 @@ else:
     print("Parallel port not used.")
 
 
+#ip and port number from medoc application
 my_pathway = Pathway(ip='10.150.254.8',port_number=20121)
 
 #Check status of medoc connection
@@ -241,17 +226,19 @@ message2 = visual.TextStim(win, pos=[0,-.5], wrapWidth=1.5, color='#000000', ali
 print('%d questions loaded from %s'%(len(questions),params['questionFile']))
 
 # get stimulus files
+
+#image slide in instructions to explain color of square
 promptImage = 'TIMprompt2.jpg'
 stimImage = visual.ImageStim(win, pos=[0,0], name='ImageStimulus',image = promptImage, units='pix')
 
 color_list = [1,2,3,4,1,2,3,4] #1-green, 2-yellow, 3-red, 4-black, ensure each color is presented twice at random per block
 random.shuffle(color_list)
 
-#for "random" black heat - l,m,h
+#for "random" black heat - want 4 each of l,m,h
 randBlack = [0,0,0,0,1,1,1,1,2,2,2,2]
 random.shuffle(randBlack)
-randBlackCount = 0
-sleepRand = [0, 0.5, 1, 1.5, 2]
+randBlackCount = 0 #keep track of which black square we are in during task
+sleepRand = [0, 0.5, 1, 1.5, 2] #slightly vary onset of heat pain
 
 #for "random" ITI avg 15 sec
 painITI = 0
@@ -259,9 +246,15 @@ painISI = [13,14,16,17,13,14,16,17]
 random.shuffle(painISI)
 
 
-# read questions and answers from text files
+# read questions and answers from text files for instructions text, 3 Vass, and practice scale questions
 [topPrompts,bottomPrompts] = BasicPromptTools.ParsePromptFile(params['promptDir']+params['promptFile'])
 print('%d prompts loaded from %s'%(len(topPrompts),params['promptFile']))
+
+
+[topPrompts0,bottomPrompts0] = BasicPromptTools.ParsePromptFile(params['promptDir']+params['initialpromptFile'])
+print('%d prompts loaded from %s'%(len(topPrompts0),params['initialpromptFile']))
+
+
 
 [questions_vas1,options_vas1,answers_vas1] = BasicPromptTools.ParseQuestionFile(params['moodQuestionFile1'])
 print('%d questions loaded from %s'%(len(questions_vas1),params['moodQuestionFile1']))
@@ -278,6 +271,7 @@ print('%d questions loaded from %s'%(len(questions_prac),params['introPractice']
 
 listlist = []
 
+#excel in the folder to convert from Celsius temp to binary code for the medoc machine
 excelTemps = pd.read_excel(params['convExcel'])
 
 # ============================ #
@@ -292,6 +286,7 @@ def AddToFlipTime(tIncrement=1.0):
 def SetFlipTimeToNow():
     tNextFlip[0] = globalClock.getTime()
 
+#pause everything until stimuli are ready to move on
 def WaitForFlipTime():
     while (globalClock.getTime()<tNextFlip[0]):
         keyList = event.getKeys()
@@ -300,11 +295,12 @@ def WaitForFlipTime():
             if key in ['q','escape']:
                 CoolDown()
 
+#main function that takes information to run through each trial
 def GrowingSquare(color, block, trial, ratings,params,tracker):
     import time
     global painITI
-    version = expInfo['Version']
 
+#set color of square
     if color == 1:
         col = 'darkseagreen'
         colCode = int('8fbc8f',16)
@@ -328,89 +324,83 @@ def GrowingSquare(color, block, trial, ratings,params,tracker):
     fixationCross.lineColor = 'lightgrey'
     fixationCross.draw()
     WaitForFlipTime()
+    #gray color = during the instructions
     if col is not 'gray':
         SetPort(color, 1, block)
     fixation.autoDraw = False
     win.flip()
 
-    # # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/'+col+'.jpg')
-    # params['screenIdx'] += 1
-    if version is 2:
 
-        ####eyelink: growing square ####
-        # Start Eyelink Trial label
-        if params['eyeLinkSupport']:
-            tracker.sendMessage('TRIAL_RESULT 0')
-            tracker.sendMessage('TRIALID %d' % 0)
+    ####eyelink: growing square ####
+    # Start Eyelink Trial label
+    if params['eyeLinkSupport']:
+        tracker.sendMessage('TRIAL_RESULT 0')
+        tracker.sendMessage('TRIALID %d' % 0)
 
-            # Save Screenshot
-            if not os.path.isfile('img/' + col + '.jpg'):
-                # import shutil
-                win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-                win.saveMovieFrames('img/' + col + '.jpg')
-                # shutil.copyfile('img/' + col + '.jpg', imgScreenShot2)
+        # Save Screenshot
+        if not os.path.isfile('img/' + col + '.jpg'):
+            # import shutil
+            win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
+            win.saveMovieFrames('img/' + col + '.jpg')
 
-            tracker.sendMessage('!V IMGLOAD CENTER %s %d %d %d %d' % (
-                "img/" + col + ".jpg", 1024 / 2, 768 / 2, 1024, 768))
+        tracker.sendMessage('!V IMGLOAD CENTER %s %d %d %d %d' % (
+            "img/" + col + ".jpg", 1024 / 2, 768 / 2, 1024, 768))
 
-            # aoiFirstTimeStart = time.time() * 1000
-            aoiTimeStart = time.time() * 1000
-            aoiPoint = np.array([26, 19.5])
-            aoiDiff = aoiPoint * 0.216
+        aoiTimeStart = time.time() * 1000
+        aoiPoint = np.array([26, 19.5])
+        aoiDiff = aoiPoint * 0.216
 
-        #Rbefore = anxSlider.getRating()
-        Rbefore = ratings.getRating()
-        for i in range(180):
-            timer = core.Clock()
-            timer.add(0.0665)
+    Rbefore = ratings.getRating()
+    #loop to continuously grow the square (180 * .0665 = ~12 sec to grow to total size)
+    for i in range(180):
+        timer = core.Clock()
+        timer.add(0.0665)
 
-            while timer.getTime() < 0:
-                rect.draw()
-                fixationCross.draw()
-                win.flip()
-                # get new keys
-                newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
-                # check each keypress for escape keys
-                if len(newKeys) > 0:
-                    for thisKey in newKeys:
-                        if thisKey[0] in ['q', 'escape']:  # escape keys
-                            CoolDown()  # exit gracefully
-
-            # Eyelink AOI record (start)
-            aoiTimeEnd = time.time() * 1000
-            #R = anxSlider.getRating()
-            R = ratings.getRating()
-            # if R != Rbefore:
-            tracker.sendMessage(
-                '!V IAREA %d %d RECTANGLE %d %d %d %d %d %s' % (int(aoiTimeEnd - aoiTimeStart), 0,
-                                                                1, max(0,512 - aoiPoint[0]),
-                                                                max(0,390 - aoiPoint[1]),
-                                                                min(1024,512 + aoiPoint[0]),
-                                                                min(768,390 + aoiPoint[1]),
-                                                                'growing square (color:' + col + ')' ))
-            tracker.sendMessage(
-                '!V IAREA %d %d RECTANGLE %d %d %d %d %d %s' % (int(aoiTimeEnd - aoiTimeStart), 0,
-                                                                2, 512 + (9.2 * R - 230 - 25),
-                                                                390 + 270,
-                                                                512 + (9.2 * R - 230 + 25),
-                                                                390 + 225,
-                                                                'VAS rating location'))
-            # Eyelink AOI record (end)
-            rect.size = rect.size + 0.0216
-            aoiPoint += aoiDiff
+        while timer.getTime() < 0:
             rect.draw()
             fixationCross.draw()
             win.flip()
+            # get new keys
+            newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
+            # check each keypress for escape keys
+            if len(newKeys) > 0:
+                for thisKey in newKeys:
+                    if thisKey[0] in ['q', 'escape']:  # escape keys
+                        CoolDown()  # exit gracefully
 
-            # if R != Rbefore:
-            aoiTimeStart = aoiTimeEnd
-            Rbefore = R
+        # Eyelink AOI record (start)
+        aoiTimeEnd = time.time() * 1000
+        #R = anxSlider.getRating()
+        R = ratings.getRating()
+        # if R != Rbefore:
+        tracker.sendMessage(
+            '!V IAREA %d %d RECTANGLE %d %d %d %d %d %s' % (int(aoiTimeEnd - aoiTimeStart), 0,
+                                                            1, max(0,512 - aoiPoint[0]),
+                                                            max(0,390 - aoiPoint[1]),
+                                                            min(1024,512 + aoiPoint[0]),
+                                                            min(768,390 + aoiPoint[1]),
+                                                            'growing square (color:' + col + ')' ))
+        tracker.sendMessage(
+            '!V IAREA %d %d RECTANGLE %d %d %d %d %d %s' % (int(aoiTimeEnd - aoiTimeStart), 0,
+                                                            2, 512 + (9.2 * R - 230 - 25),
+                                                            390 + 270,
+                                                            512 + (9.2 * R - 230 + 25),
+                                                            390 + 225,
+                                                            'VAS rating location'))
+        # Eyelink AOI record (end)
+        rect.size = rect.size + 0.0216
+        aoiPoint += aoiDiff
+        rect.draw()
+        fixationCross.draw()
+        win.flip()
 
-            if col is not 'gray':
-                BehavFile(globalClock.getTime(),block+1,trial+1,color,globalClock.getTime()-trialStart,"square",globalClock.getTime()-phaseStart,ratings.getRating())
-            ++i
+        # if R != Rbefore:
+        aoiTimeStart = aoiTimeEnd
+        Rbefore = R
+
+        if col is not 'gray':
+            BehavFile(globalClock.getTime(),block+1,trial+1,color,globalClock.getTime()-trialStart,"square",globalClock.getTime()-phaseStart,ratings.getRating())
+        ++i
 
     if col is not 'gray':
         # print(time.time())
@@ -993,7 +983,10 @@ def RunPrompts():
 
         # display prompts
     if not params['skipPrompts']:
-        BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
+        
+        BasicPromptTools.RunPrompts(topPrompts0,bottomPrompts0,win,message1,message2)
+        
+        #BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
 
         tNextFlip[0] = globalClock.getTime() + 15
         fixation.autoDraw = True
@@ -1047,6 +1040,11 @@ def RunPrompts():
         thisKey = event.waitKeys() # use if need to repeat instructions
         if thisKey[0] == 'r':
             RunPrompts()
+            
+            
+        BasicPromptTools.RunPrompts(["We are about to start !"],["Press any button to continue"],win,message1,message2)
+    
+            
     tNextFlip[0] = globalClock.getTime() + 5.0
 
 # =========================== #
@@ -1061,8 +1059,7 @@ logging.log(level=logging.EXP, msg='---START EXPERIMENT---')
 tStimVec = np.zeros(params['nTrials'])
 
 avgArray = []
-# Eyelink support (only if version is 2)
-params['eyeLinkSupport'] = True if expInfo['Version'] == 2 else False
+params['eyeLinkSupport'] = True 
     
 for block in range(0, params['nBlocks']):
 
@@ -1404,9 +1401,9 @@ for block in range(0, params['nBlocks']):
             blockName = "123" if block == 2 else "456"
             outEDF = "EDF/" + filename + "_block" + blockName + ".edf"
             # eyeLinkFinishRecording(tracker, outEDF,io)
-            if not os.path.exists(".tmp"):
-                os.makedirs(".tmp")
-            with open(".tmp/output.txt", "w") as text_file:
+            if not os.path.exists("../.tmp"):
+                os.makedirs("../.tmp")
+            with open("../.tmp/output.txt", "w") as text_file:
                 text_file.write(outEDF)
             tracker.sendMessage('TRIAL_RESULT 0')
             tracker.setRecordingState(False)

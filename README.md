@@ -1,1 +1,0 @@
-# PsychoPy2Research
