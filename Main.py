@@ -686,7 +686,7 @@ def RunMoodVas(questions, options, name='MoodVas'):
         # win.saveMovieFrames('img/' + imgName + '.jpg')
     # RunVas(questions,options,questionDur=float("inf"), isEndedByKeypress=True,name=name)
 
-    BasicPromptTools.RunPrompts([reverse_string("מנוחה קצרה")], win, message1, message2)
+    BasicPromptTools.RunPrompts([], [reverse_string("מנוחה קצרה")], win, message1, message2)
     tNextFlip[0] = globalClock.getTime()
 
     # Save Screenshot
@@ -920,25 +920,6 @@ def RunPrompts():
         # # win.saveMovieFrames('img/' + str(params['screenIdx']) + '.jpg')
         # # params['screenIdx'] += 1
         #
-        # while (globalClock.getTime() < tNextFlip[0]):
-        #     win.flip()  # to update ratingScale
-        # fixation.autoDraw = False  # stop  drawing fixation cross
-        # # fixationCross.autoDraw = False # Changed by Jimmy
-        # tNextFlip[0] = globalClock.getTime() + 7.5
-        # fixationReady.autodraw = True
-        # win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
-
-        # Save Screenshot
-        # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        # win.saveMovieFrames('img/' + str(params['screenIdx']) + '.jpg')
-        # params['screenIdx'] += 1
-        # while (globalClock.getTime() < tNextFlip[0]):
-        #     fixationReady.draw()
-        #     win.flip()  # to update ratingScale
-        #     # Save Screenshot
-        #     # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        #     # win.saveMovieFrames('img/' + str(params['screenIdx']) + '.jpg')
-        #     # params['screenIdx'] += 1
 
 
         trialStart = GrowingSquare(5, 0, 0, pracScale, params, "")
@@ -991,7 +972,7 @@ for block in range(0, params['nBlocks']):
         WaitForFlipTime()
         RunPrompts()
 
-    if block == 3:
+    if block == 2:
         print("got to block 3 if statement")
         anxSlider.autoDraw = False
         fixation.autoDraw = False
@@ -1021,7 +1002,7 @@ for block in range(0, params['nBlocks']):
                                   options=("Not Anxious", "Very Anxious"), textColor=params['textColor'])
 
     # Wait until it's time to display first stimulus
-    while (globalClock.getTime() < tNextFlip[0] + 4):
+    while (globalClock.getTime() < tNextFlip[0] + 2):
         R = anxSlider.getRating()
 
         win.flip()  # to update ratingScale
@@ -1035,34 +1016,13 @@ for block in range(0, params['nBlocks']):
     win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
     SetPortData(params['codeReady'])
 
-    # kk = 0
-    # if kk == 0:
-    #     win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    #     win.saveMovieFrames('img/ready.jpg')
-    #     kk += 1
-
 
     tracker = ""
-
-    # kk = 0
-    #
-    # if kk == 0:
-    #     win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    #     win.saveMovieFrames('img/ready.jpg')
-    #     kk += 1
 
     while (globalClock.getTime() < tNextFlip[0]):
         R = anxSlider.getRating()
 
         win.flip()  # to update ratingScale
-
-        # poss = [[9.2 * R - 230 + 25, -225], [9.2 * R - 230 + 25, -270], [9.2 * R - 230 - 25, -225],
-        #         [9.2 * R - 230 - 25, -270]]  # VAS scale
-
-    # if kk == 0:
-    #     win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    #     win.saveMovieFrames('img/ready.jpg')
-    #     kk += 1
 
     fixationReady.autoDraw = False
     arrayLength = 1
@@ -1094,15 +1054,8 @@ for block in range(0, params['nBlocks']):
 
         phaseStart = globalClock.getTime()
         Rbefore = anxSlider.getRating()
-        kk = 0
         while (globalClock.getTime() < tNextFlip[0] + 4):
             R = anxSlider.getRating()
-
-            # if kk == 0:
-            #     win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-            #     win.saveMovieFrames('img/safe.jpg')
-            #     k = 0
-
 
             win.flip()  # to update ratingScale
 
@@ -1118,22 +1071,11 @@ for block in range(0, params['nBlocks']):
         tNextFlip[0] = globalClock.getTime() + 7.5
         win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
 
-        # if kk == 0:
-        #     win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        #     win.saveMovieFrames('img/ready.jpg')
-        #     kk += 1
-
         phaseStart = globalClock.getTime()
         Rbefore = anxSlider.getRating()
-        kk = 0
         while (globalClock.getTime() < tNextFlip[0]):
             fixationReady.draw()
             R = anxSlider.getRating()
-
-            # if kk == 0:
-            #     win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-            #     win.saveMovieFrames('img/ready.jpg')
-            #     kk += 1
 
             win.flip()  # to update ratingScale
             if R != Rbefore:
