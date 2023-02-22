@@ -906,8 +906,6 @@ for block in range(0, params['nBlocks']):
 
     # wait before first stimulus
 
-    fixation.autoDraw = True  # Start drawing fixation cross
-
     win.callOnFlip(SetPortData, data=params['codeBaseline']) # Calls a function to set the port data to the baseline code.
 
     tracker = ""
