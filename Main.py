@@ -526,7 +526,7 @@ def RunVas(questions, options, pos=(0., -0.25), scaleTextPos=[0., 0.25], questio
     if isEndedByKeypress:
         SetFlipTimeToNow()  # no duration specified, so timing creep isn't an issue
     else:
-        AddToFlipTime(questionDur * len(questions))  # add question duration * # of questions
+        AddToFlipTime(1) # I changes that from: AddToFlipTime(questionDur * len(questions))  # add question duration * # of questions
 
 
 def PersistentScale(question, options, win, name='Question', textColor='black', pos=(0., 0.), stepSize=1.,
@@ -668,10 +668,6 @@ def RunMoodVas(questions, options, name='MoodVas'):
     if not params['skipPrompts']:
         BasicPromptTools.RunPrompts([params['PreVasMsg']], [reverse_string("לחץ על כל דבר כדי להמשיך.")], win, message1, message2)
 
-    # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/letsDoScales.jpg')
-
     # Display this VAS
     for i in range(len(questions)):
         question = [questions[i]]
@@ -689,12 +685,6 @@ def RunMoodVas(questions, options, name='MoodVas'):
     BasicPromptTools.RunPrompts([], [reverse_string("מנוחה קצרה")], win, message1, message2)
     tNextFlip[0] = globalClock.getTime()
 
-    # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/' + imgName + '.jpg')
-
-    # display fixation before first stimulus
-    # fixation.draw() # Fixation changed by jimmy
     fixationCross.draw()
     win.logOnFlip(level=logging.EXP, msg='Display Fixation')
 
@@ -702,9 +692,7 @@ def RunMoodVas(questions, options, name='MoodVas'):
     WaitForFlipTime()
     # show screen and update next flip time
     win.flip()
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/PlusOnly.jpg')
-    AddToFlipTime(60)
+    AddToFlipTime(1)
 
 
 def CoolDown():
@@ -752,24 +740,14 @@ def BetweenBlock(params):
         win.flip()  # to update ratingScale
     # stop autoDraw
     anxSlider.autoDraw = False
-    AddToFlipTime(300)
+    AddToFlipTime(1)
     message1.setText("This concludes the current block. Please wait for further instruction before continuing.")
     message2.setText("Press SPACE to continue.")
     win.logOnFlip(level=logging.EXP, msg='BetweenBlock')
 
-    # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/'+str(params['screenIdx'])+'.jpg')
-    # params['screenIdx'] += 1
-
     message1.draw()
     message2.draw()
     win.flip()
-
-    # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/'+str(params['screenIdx'])+'.jpg')
-    # params['screenIdx'] += 1
 
     thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
     if thisKey:
@@ -894,35 +872,16 @@ def RunPrompts():
         BasicPromptTools.RunPrompts(topPrompts1, bottomPrompts1, win, message1, message2)
         BasicPromptTools.RunPrompts(topPrompts2, bottomPrompts2, win, message1, message2)
 
-        fixation = visual.TextStim(win, pos=[0, 5], text='SAFE', font='Helvetica Bold', color='skyblue',
-                                   alignHoriz='center',
-                                   bold=True, height=3.5)
-        fixation.draw()
-        win.flip()
-        thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
-
-        BasicPromptTools.RunPrompts(topPrompts3, bottomPrompts3, win, message1, message2)
-
-        fixationReady = visual.TextStim(win, pos=[0, 5], text='GET READY', font='Helvetica Bold', color='gray',
-                                        alignHoriz='center', bold=True, height=3.5, wrapWidth=500)
-        fixationReady.draw()
-        win.flip()
-        thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
         # BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
-
 
         trialStart = GrowingSquare(5, 0, 0, pracScale, params, "")
         event.waitKeys()
 
         WaitForFlipTime()
-        AddToFlipTime(180)
+        AddToFlipTime(1)
         stimImage.setImage(promptImage)
         stimImage.autoDraw = True;
         win.flip()
-        # Save Screenshot
-        # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        # win.saveMovieFrames('img/' + str(params['screenIdx']) + '.jpg')
-        # params['screenIdx'] += 1
 
         key = event.waitKeys()
         stimImage.autoDraw = False;
@@ -943,6 +902,7 @@ def RunPrompts():
 # =========================== #
 # ===== MAIN EXPERIMENT ===== #
 # =========================== #
+
 
 # log the start of the and set up
 logging.log(level=logging.EXP, msg='---START EXPERIMENT---')
@@ -980,8 +940,6 @@ for block in range(0, params['nBlocks']):
 
     win.callOnFlip(SetPortData, data=params['codeBaseline']) # Calls a function to set the port data to the baseline code.
 
-    win.logOnFlip(level=logging.EXP, msg='Display Fixation') #  Logs the fixation display.
-
     tracker = ""
 
     # Creates a new persistent visual analog scale (VAS) to measure anxiety.
@@ -994,25 +952,6 @@ for block in range(0, params['nBlocks']):
 
         win.flip()  # to update ratingScale
 
-    # Stops drawing the fixation cross and starts drawing the "get ready" message.
-    fixation.autoDraw = False
-    fixationReady.autoDraw = True
-    tNextFlip[0] = globalClock.getTime() + 7.5
-
-    # Logs the "get ready" message display.
-    win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
-    SetPortData(params['codeReady'])
-
-
-    tracker = ""
-
-    # Waits until it's time to display the first stimulus.
-    while (globalClock.getTime() < tNextFlip[0]):
-        R = anxSlider.getRating()
-
-        win.flip()  # to update ratingScale
-
-    fixationReady.autoDraw = False
     arrayLength = 1
     painITI = 0
 
@@ -1027,7 +966,6 @@ for block in range(0, params['nBlocks']):
 
         # Calls the GrowingSquare function to present the stimulus, and records the start time and phase start time.
         trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider, params, tracker)
-        # Delay 2 seconds
         win.flip() # Flips the screen and waits for 2 seconds.
         core.wait(2)
 
@@ -1036,49 +974,9 @@ for block in range(0, params['nBlocks']):
         # Sets the next stimulus presentation time.
         tNextFlip[0] = globalClock.getTime() + (painISI[painITI])
         painITI += 1
-        fixationCross.autodraw = False
-        SetPortData(params['codeFixation']) # Sets the port data to the fixation code.
-        fixation.autoDraw = True
-        win.logOnFlip(level=logging.EXP, msg='Display Fixation')
-
-        phaseStart = globalClock.getTime()
-        Rbefore = anxSlider.getRating()
-        # Presents the safe screen and records the participant's rating.
-        while (globalClock.getTime() < tNextFlip[0] + 4):
-            R = anxSlider.getRating()
-
-            win.flip()  # to update ratingScale
-
-            if R != Rbefore:
-                Rbefore = R
-            BehavFile(globalClock.getTime(), block + 1, trial + 1, color_list[trial],
-                      globalClock.getTime() - trialStart, "safe",
-                      globalClock.getTime() - phaseStart, anxSlider.getRating())
 
 
-        fixation.autoDraw = False  # stop  drawing fixation cross & starts drawing the "get ready" message.
-        fixationReady.autodraw = True
-        tNextFlip[0] = globalClock.getTime() + 7.5
-        win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
-
-        phaseStart = globalClock.getTime()
-        Rbefore = anxSlider.getRating()
-        # Waits until it's time to present the next stimulus.
-        while (globalClock.getTime() < tNextFlip[0]):
-            fixationReady.draw()
-            R = anxSlider.getRating()
-
-            win.flip()  # to update ratingScale
-            if R != Rbefore:
-                Rbefore = R
-
-            # Writes behavioral data to a file.
-            BehavFile(globalClock.getTime(), block + 1, trial + 1, color_list[trial],
-                      globalClock.getTime() - trialStart, "ready", globalClock.getTime() - phaseStart,
-                      anxSlider.getRating())
-
-
-        fixationReady.autoDraw = False  # stop  drawing fixation cross
+    ### THE FIXATION "SAFE" AND "GET READY" WAS DELETED FROM HERE ###
 
     ############################################
 
