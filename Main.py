@@ -28,6 +28,7 @@ import RatingScales
 import random  # for randomization of trials
 import math
 from devices import Pathway
+from HelperFunctions import reverse_string
 # from psychopy import visual # visual causes a bug in the guis, so it's declared after all GUIs run.
 
 # ====================== #
@@ -59,7 +60,7 @@ params = {
     'questionDur': 50.0,
     'vasStepSize': 0.5,  # how far the slider moves with a keypress (increase to move faster)
     'textColor': 'dimgray',  # black in rgb255 space or gray in rgb space
-    'PreVasMsg': "כעת נבצע דירוג"[::-1],  # Text shown BEFORE each VAS except the final one
+    'PreVasMsg': reverse_string("כעת נבצע דירוג"),  # Text shown BEFORE each VAS except the final one
     'introPractice': 'Questions/PracticeRating.txt',  # Name of text file containing practice rating scales
     'moodQuestionFile1': 'Questions/ERVas1RatingScales.txt',
     # Name of text file containing mood Q&As presented before run
@@ -215,8 +216,7 @@ fCS = params['fixCrossSize']  # size (for brevity)
 fCP = params['fixCrossPos']  # position (for brevity)
 fixation = visual.TextStim(win, pos=[0, 5], text='SAFE', font='Helvetica Bold', color='skyblue', alignHoriz='center',
                            bold=True, height=3.5)
-# fixationPlus = visual.TextStim(win, pos=[0, 5], text='+', font='Helvetica Bold', color='black', alignHoriz='center',
-#                            bold=True, height=3.5)
+
 fixationReady = visual.TextStim(win, pos=[0, 5], text='GET READY', font='Helvetica Bold', color='gray',
                                 alignHoriz='center', bold=True, height=3.5, wrapWidth=500)
 fixationCross = visual.ShapeStim(win, lineColor='#000000', lineWidth=5.0, vertices=(
@@ -666,7 +666,7 @@ def RunMoodVas(questions, options, name='MoodVas'):
     SetPortData(params['codeBaseline'])
     # display pre-VAS prompt
     if not params['skipPrompts']:
-        BasicPromptTools.RunPrompts([params['PreVasMsg']], ["Press any button to continue."], win, message1, message2)
+        BasicPromptTools.RunPrompts([params['PreVasMsg']], [reverse_string("לחץ על כל דבר כדי להמשיך.")], win, message1, message2)
 
     # Save Screenshot
     # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
@@ -686,8 +686,7 @@ def RunMoodVas(questions, options, name='MoodVas'):
         # win.saveMovieFrames('img/' + imgName + '.jpg')
     # RunVas(questions,options,questionDur=float("inf"), isEndedByKeypress=True,name=name)
 
-    BasicPromptTools.RunPrompts(["For the next minute or so, we're just going to get some baseline measures."],
-                                ["You can rest during this time."], win, message1, message2)
+    BasicPromptTools.RunPrompts([reverse_string("מנוחה קצרה")], win, message1, message2)
     tNextFlip[0] = globalClock.getTime()
 
     # Save Screenshot
@@ -970,7 +969,6 @@ def RunPrompts():
                                     message2)
 
     tNextFlip[0] = globalClock.getTime() + 5.0
-
 
 # =========================== #
 # ===== MAIN EXPERIMENT ===== #
