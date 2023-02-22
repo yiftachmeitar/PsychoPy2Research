@@ -955,70 +955,69 @@ def RunPrompts():
 # ===== MAIN EXPERIMENT ===== #
 # =========================== #
 
-
-import time
-
-# log experiment start and set up
+# log the start of the and set up
 logging.log(level=logging.EXP, msg='---START EXPERIMENT---')
+
+# Creates an empty numpy array for the number of trials specified in the experiment parameters.
 tStimVec = np.zeros(params['nTrials'])
 
+# Creates an empty list for storing average ratings across trials
 avgArray = []
 
+# Starts a for loop that iterates over each block of the experiment.
 for block in range(0, params['nBlocks']):
 
-    if block == 0:
+    if block == 0: #  If it's the first block, runs a mood VAS rating task and displays some prompts to the participant.
         SetPortData(params['codeVAS'])
         RunMoodVas(questions_vas1, options_vas1, name='PreVAS')
         WaitForFlipTime()
         RunPrompts()
 
-    if block == 2:
-        print("got to block 3 if statement")
+    if block == 2: # If it's the second block, stops drawing the anxiety slider and fixation cross, runs a mood VAS rating task, displays some prompts, and sets the next stimulus presentation time to 4-6 seconds in the future.
+        print("got to block 2 if statement")
         anxSlider.autoDraw = False
         fixation.autoDraw = False
         RunMoodVas(questions_vas2, options_vas2, name='MidRun')
         WaitForFlipTime()
 
-        # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        # win.saveMovieFrames('img/Thank_you_for_your_responses.jpg')
-
-        BasicPromptTools.RunPrompts(["Thank you for your responses."], ["Press the space bar to continue."], win,
-                                    message1, message2)
+        BasicPromptTools.RunPrompts(["Thank you for your responses."], ["Press the space bar to continue."], win,message1, message2)
         thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
         if thisKey:
-            tNextFlip[0] = globalClock.getTime() + 12.5
-    # wait before first stimulus
-    fixation.autoDraw = True  # Start drawing fixation cross
-    win.callOnFlip(SetPortData, data=params['codeBaseline'])
-    win.logOnFlip(level=logging.EXP, msg='Display Fixation')
+            tNextFlip[0] = globalClock.getTime() + random.randint(4, 6)
 
-    # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/'+str(params['screenIdx'])+'.jpg')
-    # params['screenIdx'] += 1
+    # wait before first stimulus
+
+    fixation.autoDraw = True  # Start drawing fixation cross
+
+    win.callOnFlip(SetPortData, data=params['codeBaseline']) # Calls a function to set the port data to the baseline code.
+
+    win.logOnFlip(level=logging.EXP, msg='Display Fixation') #  Logs the fixation display.
 
     tracker = ""
+
+    # Creates a new persistent visual analog scale (VAS) to measure anxiety.
     anxSlider = MakePersistentVAS(win=win, question='', name='anxSlider', pos=(0, -0.7),
                                   options=("Not Anxious", "Very Anxious"), textColor=params['textColor'])
 
-    # Wait until it's time to display first stimulus
+    # Waits for 2 seconds before displaying the first stimulus.
     while (globalClock.getTime() < tNextFlip[0] + 2):
         R = anxSlider.getRating()
 
         win.flip()  # to update ratingScale
 
-        # poss = [[9.2 * R - 230 + 25, -225], [9.2 * R - 230 + 25, -270], [9.2 * R - 230 - 25, -225],
-        #         [9.2 * R - 230 - 25, -270]]  # VAS scale
-
-    fixation.autoDraw = False  # stop  drawing fixation cross
+    # Stops drawing the fixation cross and starts drawing the "get ready" message.
+    fixation.autoDraw = False
     fixationReady.autoDraw = True
     tNextFlip[0] = globalClock.getTime() + 7.5
+
+    # Logs the "get ready" message display.
     win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
     SetPortData(params['codeReady'])
 
 
     tracker = ""
 
+    # Waits until it's time to display the first stimulus.
     while (globalClock.getTime() < tNextFlip[0]):
         R = anxSlider.getRating()
 
@@ -1028,32 +1027,34 @@ for block in range(0, params['nBlocks']):
     arrayLength = 1
     painITI = 0
 
-
     ############################################
 
-
+    # Starts a loop to present each trial.
     for trial in range(params['nTrials']):
 
-        color = color_list[trial]
+        color = color_list[trial] # Selects the color for this trial.
         ratings = anxSlider
         # GrowingSquare(color, block, trial, ratings, params)
 
+        # Calls the GrowingSquare function to present the stimulus, and records the start time and phase start time.
         trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider, params, tracker)
         # Delay 2 seconds
-        win.flip()
+        win.flip() # Flips the screen and waits for 2 seconds.
         core.wait(2)
 
         # Safe screen showed up (issue exists)
 
+        # Sets the next stimulus presentation time.
         tNextFlip[0] = globalClock.getTime() + (painISI[painITI])
         painITI += 1
         fixationCross.autodraw = False
-        SetPortData(params['codeFixation'])
+        SetPortData(params['codeFixation']) # Sets the port data to the fixation code.
         fixation.autoDraw = True
         win.logOnFlip(level=logging.EXP, msg='Display Fixation')
 
         phaseStart = globalClock.getTime()
         Rbefore = anxSlider.getRating()
+        # Presents the safe screen and records the participant's rating.
         while (globalClock.getTime() < tNextFlip[0] + 4):
             R = anxSlider.getRating()
 
@@ -1066,13 +1067,14 @@ for block in range(0, params['nBlocks']):
                       globalClock.getTime() - phaseStart, anxSlider.getRating())
 
 
-        fixation.autoDraw = False  # stop  drawing fixation cross
+        fixation.autoDraw = False  # stop  drawing fixation cross & starts drawing the "get ready" message.
         fixationReady.autodraw = True
         tNextFlip[0] = globalClock.getTime() + 7.5
         win.logOnFlip(level=logging.EXP, msg='Display Get Ready')
 
         phaseStart = globalClock.getTime()
         Rbefore = anxSlider.getRating()
+        # Waits until it's time to present the next stimulus.
         while (globalClock.getTime() < tNextFlip[0]):
             fixationReady.draw()
             R = anxSlider.getRating()
@@ -1081,6 +1083,7 @@ for block in range(0, params['nBlocks']):
             if R != Rbefore:
                 Rbefore = R
 
+            # Writes behavioral data to a file.
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color_list[trial],
                       globalClock.getTime() - trialStart, "ready", globalClock.getTime() - phaseStart,
                       anxSlider.getRating())
@@ -1089,37 +1092,34 @@ for block in range(0, params['nBlocks']):
         fixationReady.autoDraw = False  # stop  drawing fixation cross
 
     ############################################
-    ############################################
 
-    # Log anxiety responses manually
+    # Logs the history of the anxiety VAS ratings for this block.
     logging.log(level=logging.DATA, msg='RatingScale %s: history=%s' % (anxSlider.name, anxSlider.getHistory()))
 
-    # Randomize order of colors for next block
-
+    # Randomize order of colors for next block (if there is a next block, meaning we are not in the end)
     if block < (params['nBlocks'] - 1):
         BetweenBlock(params)  # betweenblock message
         random.shuffle(color_list)
         random.shuffle(painISI)
-    logging.log(level=logging.EXP, msg='==== END BLOCK %d/%d ====' % (block + 1, params['nBlocks']))
+    logging.log(level=logging.EXP, msg='==== END BLOCK %d/%d ====' % (block + 1, params['nBlocks'])) #  Logs the end of the block.
 
     # finish recording
     # if block == 2 or block == 5:
     if block == 2 or block == (params['nBlocks'] - 1):
         print ("I got to the last if statement")
 
-    # EveryHalf(anxSlider)
 
-anxSlider.autoDraw = False
-WaitForFlipTime()
+anxSlider.autoDraw = False # This stops drawing the persistent VAS.
+WaitForFlipTime() #  This waits for the next screen refresh.
 
-RunMoodVas(questions_vas3, options_vas3, name='PostRun')
+RunMoodVas(questions_vas3, options_vas3, name='PostRun') # This displays a mood VAS after the experiment is completed.
 
-WaitForFlipTime()
+WaitForFlipTime() # This waits for the next screen refresh.
 
 # Log end of experiment
 logging.log(level=logging.EXP, msg='--- END EXPERIMENT ---')
 
-# exit experiment
+# clean-up & exit experiment
 CoolDown()
 
 
