@@ -910,17 +910,6 @@ def RunPrompts():
         thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
         # BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
 
-        # tNextFlip[0] = globalClock.getTime() + 15
-        # fixation.autoDraw = True # Changed by Jimmy
-        # # fixationCross.autoDraw = True
-        # win.logOnFlip(level=logging.EXP, msg='Display Fixation')
-        #
-        # # # Save Screenshot
-        # # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        # # win.saveMovieFrames('img/' + str(params['screenIdx']) + '.jpg')
-        # # params['screenIdx'] += 1
-        #
-
 
         trialStart = GrowingSquare(5, 0, 0, pracScale, params, "")
         event.waitKeys()
