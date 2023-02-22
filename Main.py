@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+
 """Display images from a specified folder and present them to the subject."""
 # GalbraithHeat2.py
 # Created 11/09/15 by DJ based on DistractionTask_practice_d3.py
@@ -15,6 +16,7 @@
 # ====================================== #
 # ===Import all the relevant packages=== #
 # ====================================== #
+
 from psychopy import core, gui, data, event, sound, logging
 import pandas as pd
 from psychopy.tools.filetools import fromFile, toFile  # saving and loading parameter files
@@ -54,10 +56,10 @@ params = {
     'questionFile': 'Text/AnxietyScale.txt',  # Name of text file containing Q&As
     'questionDownKey': '1',  # move slider left
     'questionUpKey': '2',  # move slider right
-    'questionDur': 999.0,
+    'questionDur': 50.0,
     'vasStepSize': 0.5,  # how far the slider moves with a keypress (increase to move faster)
     'textColor': 'dimgray',  # black in rgb255 space or gray in rgb space
-    'PreVasMsg': "Let's do some rating scales.",  # Text shown BEFORE each VAS except the final one
+    'PreVasMsg': "כעת נבצע דירוג"[::-1],  # Text shown BEFORE each VAS except the final one
     'introPractice': 'Questions/PracticeRating.txt',  # Name of text file containing practice rating scales
     'moodQuestionFile1': 'Questions/ERVas1RatingScales.txt',
     # Name of text file containing mood Q&As presented before run
@@ -110,7 +112,7 @@ try:  # try to get a previous parameters file
     expInfo['MHeat'] = 41.0
     expInfo['HHeat'] = 46.0
     expInfo['painSupport'] = False
-    # expInfo['practiceMoodScale'] = False
+
 except:  # if not there then use a default set
     expInfo = {
         'subject': '1',
@@ -121,7 +123,6 @@ except:  # if not there then use a default set
         'skipPrompts': False,
         'painSupport': True,
         'paramsFile': ['DEFAULT', 'Load...'],
-        # 'practiceMoodScale': False
     }
 
 # overwrite params struct if you just saved a new parameter set
@@ -131,9 +132,7 @@ if saveParams:
 # present a dialogue to change select params
 # dlg = gui.DlgFromDict(expInfo, title=scriptName,
 #                       order=['subject', 'session', 'LHeat', 'MHeat', 'HHeat', 'skipPrompts', 'paramsFile'])
-dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat',
-                                                        # 'skipPrompts','painSupport','practiceMoodScale','paramsFile'])
-'skipPrompts','painSupport','paramsFile'])
+dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat','skipPrompts','painSupport','paramsFile'])
 if not dlg.OK:
     core.quit()  # the user hit cancel, so exit
 
@@ -150,7 +149,6 @@ if expInfo['paramsFile'] not in ['DEFAULT', None]:  # otherwise, just use defaul
 # transfer skipPrompts from expInfo (gui input) to params (logged parameters)
 params['painSupport'] = expInfo['painSupport']
 params['skipPrompts'] = expInfo['skipPrompts']
-# params['practiceMoodScale'] = expInfo['practiceMoodScale']
 
 # save experimental info
 toFile('%s-lastExpInfo.psydat' % scriptName, expInfo)  # save params to file for next time
@@ -240,8 +238,7 @@ print('%d questions loaded from %s' % (len(questions), params['questionFile']))
 promptImage = 'TIMprompt2.jpg'
 stimImage = visual.ImageStim(win, pos=[0, 0], name='ImageStimulus', image=promptImage, units='pix')
 
-color_list = [1, 2, 3, 4, 1, 2, 3,
-              4]  # 1-green, 2-yellow, 3-red, 4-black, ensure each color is presented twice at random per block
+color_list = [1, 2, 3, 4, 1, 2, 3,4]  # 1-green, 2-yellow, 3-red, 4-black, ensure each color is presented twice at random per block
 random.shuffle(color_list)
 
 # for "random" black heat - want 4 each of l,m,h
@@ -262,20 +259,8 @@ print('%d prompts loaded from %s' % (len(topPrompts), params['promptFile']))
 [topPrompts1, bottomPrompts1] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts1.txt")
 print('%d prompts loaded from %s' % (len(topPrompts1), "InitialSafePrompts1.txt"))
 
-# fixation = visual.TextStim(win, pos=[0, 5], text='SAFE', font='Helvetica Bold', color='skyblue', alignHoriz='center',
-#                            bold=True, height=3.5)
-# fixation.draw()
-# win.flip()
-# thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
-
 [topPrompts2, bottomPrompts2] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts2.txt")
 print('%d prompts loaded from %s' % (len(topPrompts2), "InitialSafePrompts2.txt"))
-
-# fixationReady = visual.TextStim(win, pos=[0, 5], text='GET READY', font='Helvetica Bold', color='gray',
-#                                 alignHoriz='center', bold=True, height=3.5, wrapWidth=500)
-# fixationReady.draw()
-# win.flip()
-# thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
 
 [topPrompts3, bottomPrompts3] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts3.txt")
 print('%d prompts loaded from %s' % (len(topPrompts3), "InitialSafePrompts3.txt"))
@@ -382,7 +367,6 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         fixationCross.draw()
         win.flip()
 
-        # if R != Rbefore:
         Rbefore = R
 
         if col != 'gray':
@@ -894,8 +878,6 @@ def MakePersistentVAS(question, options, win, name='Question', textColor='black'
 # ======= RUN PROMPTS ======= #
 # =========================== #
 def RunPrompts():
-    # if params['practiceMoodScale']:
-
 
     # display prompts
     if not params['skipPrompts']:
