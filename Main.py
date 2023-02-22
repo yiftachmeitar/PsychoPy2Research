@@ -1,18 +1,5 @@
 #!/usr/bin/env python2
 
-"""Display images from a specified folder and present them to the subject."""
-# GalbraithHeat2.py
-# Created 11/09/15 by DJ based on DistractionTask_practice_d3.py
-# Updated 11/10/15 by DJ - cleaned up comments
-# Adapted 7/7/2020 by JG - Heat Anticipation Task: change stimuli and timings
-# Updated 7/16/20 by DJ - pickle->psydat extension, .JPG image extension, set flip time to now after instructions
-# Updated 7/29/20 by DJ - added VAS that's persistent throughout block, fixed color order, removed trial responses, simplified params
-# Updated 8/20/20 by JG - created functions for output
-# Updated 8/31/20 by JG - changed visuals, added heat input, added VAS pre, mid, post, modified instructions to start over
-# Updated 3/1/22 by JG,LL - debugged growingsquare to work for practice
-# Updated 4/27/2022 by JG - took out version option and commented the h*ll out of it
-# Updated Mon, Aug  1, 2022  7:35:59 AM by KL - options (eyelink, pain sensor), and e.g., updated.
-
 # ====================================== #
 # ===Import all the relevant packages=== #
 # ====================================== #
@@ -50,7 +37,7 @@ params = {
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
-    'skipPrompts': False,  # go right to the task after vas and baseline
+    'skipPrompts': True,  # go right to the task after vas and baseline
     'promptDir': 'Text/',  # directory containing prompts and questions files
     'promptFile': 'HeatAnticipationPrompts.txt',  # Name of text file containing prompts
     'initialpromptFile': 'InitialSafePrompts.txt',  # explain "safe" and "get ready" before the practice
@@ -131,8 +118,6 @@ if saveParams:
     expInfo['paramsFile'] = [newParamsFilename, 'Load...']
 
 # present a dialogue to change select params
-# dlg = gui.DlgFromDict(expInfo, title=scriptName,
-#                       order=['subject', 'session', 'LHeat', 'MHeat', 'HHeat', 'skipPrompts', 'paramsFile'])
 dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat','skipPrompts','painSupport','paramsFile'])
 if not dlg.OK:
     core.quit()  # the user hit cancel, so exit
@@ -594,11 +579,6 @@ def PersistentScale(question, options, win, name='Question', textColor='black', 
         # Display until time runs out (or key is pressed, if specified)
         win.logOnFlip(level=logging.EXP, msg='Display %s%d' % (name, iQ))
 
-        # Save Screenshot
-        # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        # win.saveMovieFrames('img/' + str(params['screenIdx']) + '.jpg')
-        # params['screenIdx'] += 1
-
         tStart = ts.time()
         while (ts.time() - tStart) < questionDur:
             # Look for keypresses
@@ -637,11 +617,6 @@ def PersistentScale(question, options, win, name='Question', textColor='black', 
             # Redraw
             ratingScale.draw()
             win.flip()
-
-            # Save Screenshot
-            # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-            # win.saveMovieFrames('img/'+str(params['screenIdx']) + '.jpg')
-            # params['screenIdx'] += 1
 
         # Log outputs
         rating[iQ] = ratingScale.getRating()
@@ -842,11 +817,6 @@ def MakePersistentVAS(question, options, win, name='Question', textColor='black'
     # Display until time runs out (or key is pressed, if specified)
     win.logOnFlip(level=logging.EXP, msg='Display %s' % name)
     win.flip()
-
-    # # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/'+str(params['screenIdx'])+'.jpg')
-    # params['screenIdx'] += 1
 
     return ratingScale
 
