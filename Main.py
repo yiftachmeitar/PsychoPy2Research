@@ -45,8 +45,8 @@ newParamsFilename = 'GalbraithHeatParams.psydat'
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 8,  # number of squares in each block
-    'nBlocks': 5,  # number of blocks (aka runs) - need time to move electrode in between
+    'nTrials': 1,  # number of squares in each block
+    'nBlocks': 1,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -57,7 +57,7 @@ params = {
     'questionFile': 'Text/AnxietyScale.txt',  # Name of text file containing Q&As
     'questionDownKey': '1',  # move slider left
     'questionUpKey': '2',  # move slider right
-    'questionDur': 50.0,
+    'questionDur': 5.0,
     'vasStepSize': 0.5,  # how far the slider moves with a keypress (increase to move faster)
     'textColor': 'dimgray',  # black in rgb255 space or gray in rgb space
     'PreVasMsg': reverse_string("כעת נבצע דירוג"),  # Text shown BEFORE each VAS except the final one
