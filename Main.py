@@ -25,8 +25,6 @@ from HelperFunctions import reverse_string
 saveParams = False;
 newParamsFilename = 'GalbraithHeatParams.psydat'
 
-# Global Exit (Jimmy)
-# event.globalKeys.add(key='q', func=os._exit, func_args=[1], func_kwargs=None)
 
 # Declare primary task parameters.
 params = {
