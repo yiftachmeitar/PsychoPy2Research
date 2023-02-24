@@ -289,13 +289,10 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     phaseStart = globalClock.getTime()
     rect = visual.Rect(win=win, units='norm', size=0.1, fillColor=col, lineColor=col, lineWidth=20)
     rect.draw()
-    fixationCross.lineColor = 'lightgrey'
-    fixationCross.draw()
     WaitForFlipTime()
     # gray color = during the instructions
     if col != 'gray':
         SetPort(color, 1, block)
-    fixation.autoDraw = False
     win.flip()
 
     Rbefore = ratings.getRating()
@@ -306,7 +303,6 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
 
         while timer.getTime() < 0:
             rect.draw()
-            fixationCross.draw()
             win.flip()
             # get new keys
             newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
@@ -320,7 +316,6 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
 
         rect.size = rect.size + 0.0216
         rect.draw()
-        fixationCross.draw()
         win.flip()
 
         Rbefore = R
@@ -342,13 +337,11 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         timer.add(3 + random.sample(sleepRand, 1)[0])
         while timer.getTime() < 0:
             rect.draw()
-            fixationCross.draw()
 
             R = ratings.getRating()
 
             rect.size = rect.size + 0.0216
             rect.draw()
-            fixationCross.draw()
             win.flip()
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
                       globalClock.getTime() - phaseStart, ratings.getRating())
@@ -366,14 +359,12 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         timer.add(5)
         while timer.getTime() < 0:
             rect.draw()
-            fixationCross.draw()
 
             # R = anxSlider.getRating()
             R = ratings.getRating()
 
             rect.size = rect.size + 0.0216
             rect.draw()
-            fixationCross.draw()
             win.flip()
 
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
@@ -392,14 +383,11 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         # Wait for relevant key press or 'painDur' seconds
         while (globalClock.getTime() < tNextFlip[0]):  # until it's time for the next frame
             rect.draw()
-            fixationCross.draw()
 
-            # R = anxSlider.getRating()
             R = ratings.getRating()
 
             rect.size = rect.size + 0.0216
             rect.draw()
-            fixationCross.draw()
             win.flip()
 
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
@@ -932,7 +920,7 @@ for block in range(0, params['nBlocks']):
 
     # finish recording
     # if block == 2 or block == 5:
-    if block == 2 or block == (params['nBlocks'] - 1):
+    if block == 2 or block == (params['nBlocks21'] - 1):
         print ("I got to the last if statement")
 
 
