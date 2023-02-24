@@ -875,7 +875,7 @@ for block in range(0, params['nBlocks']):
 
     # Creates a new persistent visual analog scale (VAS) to measure anxiety.
     anxSlider = MakePersistentVAS(win=win, question='', name='anxSlider', pos=(0, -0.7),
-                                  options=("Not Anxious", "Very Anxious"), textColor=params['textColor'])
+                                  options=(reverse_string("לא כואב כלל"), reverse_string("כואב מאוד")), textColor=params['textColor'])
 
     # Waits for 2 seconds before displaying the first stimulus.
     while (globalClock.getTime() < tNextFlip[0] + 2):
