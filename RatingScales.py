@@ -1,20 +1,8 @@
 #!/usr/bin/env python2
 """Wrapper for RatingScale objects.."""
-# RatingScales.py
-#
-# Created 7/19/18 by DJ based on PromptTools.py
-# Updated 8/16/18 by DJ - textColor input
-# Updated 8/22/18 by DJ - added pos and stepSize inputs to ShowVAS
-# Updated 8/28/18 by DJ - added hideMouse and repeatDelay inputs to ShowVAS
-# Updated 9/5/18 by DJ - moved scale text up, added scaleTextPos input to customize it
-# Updated 12/3/18 by DJ - switched to custom markerStim, added labelYPos and markerSize as parameters
-# Updated 1/10/19 by DJ - if no response, log VAS result manually
-# Updated 2/21/19 by DJ - fixed VAS bug where pos!=0 led to moving marker
-# Updated 2/25/19 by DJ - added tickHeight & tickLabelWidth, changed a couple variable names
 
 from psychopy import core, event, logging#, visual # visual and gui conflict, so don't import it here
 import time
-import string
 
 def ShowVAS(questions_list, options_list, win, name='Question', questionDur=float('inf'), isEndedByKeypress=True, 
             upKey='up', downKey='down', selectKey='enter',textColor='black',pos=(0.,0.),stepSize=1.,hideMouse=True,
@@ -56,7 +44,7 @@ def ShowVAS(questions_list, options_list, win, name='Question', questionDur=floa
         ratingScale = visual.RatingScale(win, scale=questions_list[iQ], \
             low=0., high=100., markerStart=50., precision=1., labels=options_list[iQ], tickMarks=tickMarks, tickHeight=tickHeight, \
             marker=markerStim, markerColor=textColor, markerExpansion=1, singleClick=False, disappear=False, \
-            textSize=0.8, textColor=textColor, textFont='Helvetica Bold', showValue=False, \
+            textSize=0.8, textColor=textColor, textFont='Arial Hebrew', showValue=False, \
             showAccept=False, acceptKeys=selectKey, acceptPreText='key, click', acceptText='accept?', acceptSize=1.0, \
             leftKeys=downKey, rightKeys=upKey, respKeys=(), lineColor=textColor, skipKeys=['q','escape'], \
             mouseOnly=False, noMouse=hideMouse, size=2.0, stretch=1.0, pos=pos, minTime=0.4, maxTime=questionDur, \

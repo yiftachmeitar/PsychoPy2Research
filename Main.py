@@ -32,7 +32,7 @@ newParamsFilename = 'GalbraithHeatParams.psydat'
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 1,  # number of squares in each block
+    'nTrials': 2,  # number of squares in each block
     'nBlocks': 1,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
@@ -184,6 +184,7 @@ if params['painSupport']:
 # ========================== #
 from psychopy import visual
 
+
 #Initializing screen Resolution
 screenRes = [1024,768]
 
@@ -199,10 +200,10 @@ win.setMouseVisible(False)
 # create fixation cross
 fCS = params['fixCrossSize']  # size (for brevity)
 fCP = params['fixCrossPos']  # position (for brevity)
-fixation = visual.TextStim(win, pos=[0, 5], text='SAFE', font='Helvetica Bold', color='skyblue', alignHoriz='center',
+fixation = visual.TextStim(win, pos=[0, 5], text='SAFE', font='Arial Hebrew', color='skyblue', alignHoriz='center',
                            bold=True, height=3.5)
 
-fixationReady = visual.TextStim(win, pos=[0, 5], text='GET READY', font='Helvetica Bold', color='gray',
+fixationReady = visual.TextStim(win, pos=[0, 5], text='GET READY', font='Arial Hebrew', color='gray',
                                 alignHoriz='center', bold=True, height=3.5, wrapWidth=500)
 fixationCross = visual.ShapeStim(win, lineColor='#000000', lineWidth=5.0, vertices=(
 (fCP[0] - fCS / 2, fCP[1]), (fCP[0] + fCS / 2, fCP[1]), (fCP[0], fCP[1]), (fCP[0], fCP[1] + fCS / 2),
@@ -560,7 +561,7 @@ def PersistentScale(question, options, win, name='Question', textColor='black', 
                                          tickMarks=tickMarks, tickHeight=tickHeight, \
                                          marker=markerStim, markerColor=textColor, markerExpansion=1, singleClick=False,
                                          disappear=False, \
-                                         textSize=0.8, textColor=textColor, textFont='Helvetica Bold', showValue=False, \
+                                         textSize=0.8, textColor=textColor, textFont='Arial Hebrew', showValue=False, \
                                          showAccept=False, acceptKeys=selectKey, acceptPreText='key, click',
                                          acceptText='accept?', acceptSize=1.0, \
                                          leftKeys=downKey, rightKeys=upKey, respKeys=(), lineColor=textColor,
@@ -796,7 +797,7 @@ def MakePersistentVAS(question, options, win, name='Question', textColor='black'
                                      tickMarks=tickMarks, tickHeight=tickHeight, \
                                      marker=markerStim, markerColor=textColor, markerExpansion=1, singleClick=False,
                                      disappear=False, \
-                                     textSize=0.8, textColor=textColor, textFont='Helvetica Bold', showValue=False, \
+                                     textSize=0.8, textColor=textColor, textFont='Arial Hebrew', showValue=False, \
                                      showAccept=False, acceptKeys=selectKey, acceptPreText='key, click',
                                      acceptText='accept?', acceptSize=1.0, \
                                      leftKeys=downKey, rightKeys=upKey, respKeys=(), lineColor=textColor, skipKeys=[], \

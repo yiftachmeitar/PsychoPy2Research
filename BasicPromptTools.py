@@ -1,17 +1,10 @@
 #!/usr/bin/env python2
 """Load Questions, Run Prompts, and Run Probe Trials."""
-# BasicPromptTools.py
-# Created 1/30/15 by DJ based on VidLecTask.py - called PromptTools.py.
-# Updated 3/16/15 by DJ - added ReadingTask_dict.py
-# Updated 9/8/15 by DJ - added Likert option and RunQuestions_Move.
-# Updated 10/29/15 by DJ - updated distraction/reading task prompts to ask subjects to read top to bottom.
-# Updated 11/9/15 by DJ - added ParsePromptFile function, pared down and renamed to BasicPromptTools.py
-# Updated 11/12/15 by DJ - moved visual package import to fns so it doesn't interfere with parent script's GUI (weird PsychoPy bug)
-# Updated 9/13/18 by DJ - added ignoreKeys parameter to RunPrompts function (for trigger keys)
-# Updated 10/11/18 by DJ - prevent RunPrompts from redrawing/logging every time an ignored key is pressed.
 
 from psychopy import core, event, logging#, visual
 import time
+
+from HelperFunctions import reverse_string
 
 
 # --- PARSE QUESTION FILE INTO QUESTIONS AND OPTIONS --- #
@@ -27,7 +20,7 @@ def ParseQuestionFile(filename,optionsType=None): # optionsType 'Likert' returns
         options_this = options_likert
         
     # parse questions & answers
-    with open(filename) as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         for line in f:
             # remove the newline character at the end of the line
             line = line.replace('\n','')
@@ -35,12 +28,12 @@ def ParseQuestionFile(filename,optionsType=None): # optionsType 'Likert' returns
             line = line.replace('\\n','\n')
             # pass to proper output
             if line.startswith("-"): # incorrect answer
-                options_this.append(line[1:]) # omit leading -
+                options_this.append(reverse_string(line[1:])) # omit leading -
             elif line.startswith("+"): # correct answer
-                options_this.append(line[1:]) # omit leading +
+                options_this.append(reverse_string(line[1:])) # omit leading +
                 answers_all.append(len(options_this))
             elif line.startswith("?"): # question
-                questions_all.append(line[1:]) # omit leading ?
+                questions_all.append(reverse_string(line[1:])) # omit leading ?
                 # if it's not the first question, add the options to the list.
                 if options_this:
                     options_all.append(options_this)
@@ -62,7 +55,7 @@ def ParsePromptFile(filename):
     bottomPrompts = []
         
     # parse questions & answers
-    with open(filename) as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         for line in f:
             # remove the newline character at the end of the line
             line = line.replace('\n','')
@@ -169,6 +162,7 @@ def RunQuestions(question_list,options_list,win,message1,message2, name='Questio
 def RunQuestions_Move(question_list,options_list, win, name='Question', questionDur=float('inf'), isEndedByKeypress=True, upKey='up', downKey='down', selectKey='enter'):
     # import visual package
     from psychopy import visual
+
     # set up
     nQuestions = len(question_list)
     allKeys = ['']*nQuestions
