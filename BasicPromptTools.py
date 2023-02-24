@@ -78,7 +78,9 @@ def RunPrompts(topPrompts,bottomPrompts,win,message1,message2,backKey='backspace
     while iPrompt < len(topPrompts):
         if redraw:
             message1.setText(topPrompts[iPrompt])
+            message1.setFont('Arial Hebrew')
             message2.setText(bottomPrompts[iPrompt])
+            message2.setFont('Arial Hebrew')
             #display instructions and wait
             message1.draw()
             message2.draw()

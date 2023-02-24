@@ -40,7 +40,7 @@ params = {
     'skipPrompts': True,  # go right to the task after vas and baseline
     'promptDir': 'Text/',  # directory containing prompts and questions files
     'promptFile': 'HeatAnticipationPrompts.txt',  # Name of text file containing prompts
-    'initialpromptFile': 'InitialSafePrompts.txt',  # explain "safe" and "get ready" before the practice
+     # 'initialpromptFile': 'InitialSafePrompts.txt',  # explain "safe" and "get ready" before the practice - NOT USING THESE SCREENS RIGHT NOW
     'questionFile': 'Text/AnxietyScale.txt',  # Name of text file containing Q&As
     'questionDownKey': '1',  # move slider left
     'questionUpKey': '2',  # move slider right
@@ -108,7 +108,6 @@ except:  # if not there then use a default set
         'LHeat': '36.0',
         'MHeat': '41.0',
         'HHeat': '46.0',
-        'skipPrompts': False,
         'painSupport': True,
         'paramsFile': ['DEFAULT', 'Load...'],
     }
@@ -118,7 +117,7 @@ if saveParams:
     expInfo['paramsFile'] = [newParamsFilename, 'Load...']
 
 # present a dialogue to change select params
-dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat','skipPrompts','painSupport','paramsFile'])
+dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat','painSupport','paramsFile'])
 if not dlg.OK:
     core.quit()  # the user hit cancel, so exit
 
@@ -134,7 +133,6 @@ if expInfo['paramsFile'] not in ['DEFAULT', None]:  # otherwise, just use defaul
 
 # transfer skipPrompts from expInfo (gui input) to params (logged parameters)
 params['painSupport'] = expInfo['painSupport']
-params['skipPrompts'] = expInfo['skipPrompts']
 
 # save experimental info
 toFile('%s-lastExpInfo.psydat' % scriptName, expInfo)  # save params to file for next time
@@ -242,14 +240,15 @@ random.shuffle(painISI)
 [topPrompts, bottomPrompts] = BasicPromptTools.ParsePromptFile(params['promptDir'] + params['promptFile'])
 print('%d prompts loaded from %s' % (len(topPrompts), params['promptFile']))
 
-[topPrompts1, bottomPrompts1] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts1.txt")
-print('%d prompts loaded from %s' % (len(topPrompts1), "InitialSafePrompts1.txt"))
-
-[topPrompts2, bottomPrompts2] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts2.txt")
-print('%d prompts loaded from %s' % (len(topPrompts2), "InitialSafePrompts2.txt"))
-
-[topPrompts3, bottomPrompts3] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts3.txt")
-print('%d prompts loaded from %s' % (len(topPrompts3), "InitialSafePrompts3.txt"))
+# PROMPTS FOR EXPLANATION - NOT USING
+# [topPrompts1, bottomPrompts1] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts1.txt")
+# print('%d prompts loaded from %s' % (len(topPrompts1), "InitialSafePrompts1.txt"))
+#
+# [topPrompts2, bottomPrompts2] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts2.txt")
+# print('%d prompts loaded from %s' % (len(topPrompts2), "InitialSafePrompts2.txt"))
+#
+# [topPrompts3, bottomPrompts3] = BasicPromptTools.ParsePromptFile(params['promptDir'] + "InitialSafePrompts3.txt")
+# print('%d prompts loaded from %s' % (len(topPrompts3), "InitialSafePrompts3.txt"))
 
 [questions_vas1, options_vas1, answers_vas1] = BasicPromptTools.ParseQuestionFile(params['moodQuestionFile1'])
 print('%d questions loaded from %s' % (len(questions_vas1), params['moodQuestionFile1']))
@@ -642,7 +641,7 @@ def RunMoodVas(questions, options, name='MoodVas'):
     SetPortData(params['codeBaseline'])
     # display pre-VAS prompt
     if not params['skipPrompts']:
-        BasicPromptTools.RunPrompts([params['PreVasMsg']], [reverse_string("לחץ על כל דבר כדי להמשיך.")], win, message1, message2)
+        BasicPromptTools.RunPrompts([params['PreVasMsg']], [reverse_string("לחץ על כל דבר כדי להמשיך")], win, message1, message2)
 
     # Display this VAS
     for i in range(len(questions)):
@@ -829,8 +828,8 @@ def RunPrompts():
 
     # display prompts
     if not params['skipPrompts']:
-        BasicPromptTools.RunPrompts(["Let's practice with the rating scale you'll be using today."],
-                                    ["Press the space bar to continue."], win, message1, message2)
+        BasicPromptTools.RunPrompts([reverse_string("כעת נתאמן על סקלת הדירוג בה נשתמש לניסוי")],
+                                    [reverse_string("לחץ על מקש הרווח על מנת להמשיך")], win, message1, message2)
 
         pracScale = PersistentScale(questions_prac, options_prac, win, name='pracScale', pos=(0., -0.70),
                                     scaleTextPos=[0., -0.50],
@@ -840,10 +839,9 @@ def RunPrompts():
                                     selectKey=params['questionSelectKey'],
                                     hideMouse=True, params=params)
 
-        BasicPromptTools.RunPrompts(topPrompts1, bottomPrompts1, win, message1, message2)
-        BasicPromptTools.RunPrompts(topPrompts2, bottomPrompts2, win, message1, message2)
-
-        # BasicPromptTools.RunPrompts(["You are about to see a set of growing squares of a certain color. When the color fills up the screen you will feel the heat pain on your arm."],["Press any button to continue and see an example."],win,message1,message2)
+        # Get Ready and Safe prompts - NOT USING
+        # BasicPromptTools.RunPrompts(topPrompts1, bottomPrompts1, win, message1, message2)
+        # BasicPromptTools.RunPrompts(topPrompts2, bottomPrompts2, win, message1, message2)
 
         trialStart = GrowingSquare(5, 0, 0, pracScale, params, "")
         event.waitKeys()
@@ -891,7 +889,7 @@ for block in range(0, params['nBlocks']):
         SetPortData(params['codeVAS'])
         RunMoodVas(questions_vas1, options_vas1, name='PreVAS')
         WaitForFlipTime()
-        RunPrompts()
+        # RunPrompts() We don't use "Run Prompts", but give instructions as text
 
     if block == 2: # If it's the second block, stops drawing the anxiety slider and fixation cross, runs a mood VAS rating task, displays some prompts, and sets the next stimulus presentation time to 4-6 seconds in the future.
         print("got to block 2 if statement")
@@ -937,8 +935,6 @@ for block in range(0, params['nBlocks']):
         trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider, params, tracker)
         win.flip() # Flips the screen and waits for 2 seconds.
         core.wait(2)
-
-        # Safe screen showed up (issue exists)
 
         # Sets the next stimulus presentation time.
         tNextFlip[0] = globalClock.getTime() + (painISI[painITI])
