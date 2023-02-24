@@ -35,7 +35,7 @@ from EyeTrackerCalibration import EyeTrackerCalibration, eyeLinkFinishRecording
 # ====================== #
 # Save the parameters declared below?
 saveParams = False;
-newParamsFilename = 'GalbraithHeatParams.psydat'
+newParamsFilename = 'GalbraithHeatParams.psydat XXX'
 
 # Declare primary task parameters.
 params = {

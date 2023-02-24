@@ -22,9 +22,6 @@ from HelperFunctions import reverse_string
 # ===== PARAMETERS ===== #
 # ====================== #
 # Save the parameters declared below?
-saveParams = False;
-newParamsFilename = 'GalbraithHeatParams.psydat'
-
 
 # Declare primary task parameters.
 params = {
@@ -74,17 +71,6 @@ params = {
     'convExcel': 'tempConv.xlsx',  # excel file with temp to binary code mappings
 }
 
-# save parameters
-if saveParams:
-    dlgResult = gui.fileSaveDlg(prompt='Save Params...', initFilePath=os.getcwd() + '/Params',
-                                initFileName=newParamsFilename,
-                                allowed="PICKLE files (.psydat)|.psydat|All files (.*)|")
-    newParamsFilename = dlgResult
-    if newParamsFilename is None:  # keep going, but don't save
-        saveParams = False
-    else:
-        toFile(newParamsFilename, params)  # save it!
-
 # ========================== #
 # ===== SET UP LOGGING ===== #
 # ========================== #
@@ -93,43 +79,29 @@ scriptName = 'Main.py'
 try:  # try to get a previous parameters file
     expInfo = fromFile('%s-lastExpInfo.psydat' % scriptName)
     expInfo['session'] += 1  # automatically increment session number
-    expInfo['paramsFile'] = [expInfo['paramsFile'], 'Load...']
-    expInfo['LHeat'] = 36.0
-    expInfo['MHeat'] = 41.0
-    expInfo['HHeat'] = 46.0
+    expInfo['T2'] = 36.0
+    expInfo['T4'] = 41.0
+    expInfo['T6'] = 46.0
+    expInfo['T8'] = 48.0
     expInfo['painSupport'] = False
 
 except:  # if not there then use a default set
     expInfo = {
         'subject': '1',
         'session': 1,
-        'LHeat': '36.0',
-        'MHeat': '41.0',
-        'HHeat': '46.0',
+        'T2': '36.0',
+        'T4': '41.0',
+        'T6': '46.0',
+        'T8': '50.0',
         'painSupport': True,
-        'paramsFile': ['DEFAULT', 'Load...'],
     }
 
-# overwrite params struct if you just saved a new parameter set
-if saveParams:
-    expInfo['paramsFile'] = [newParamsFilename, 'Load...']
 
 # present a dialogue to change select params
-dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','LHeat','MHeat','HHeat','painSupport','paramsFile'])
+dlg = gui.DlgFromDict(expInfo, title=scriptName, order=['subject','session','T2','T4','T6','T8','painSupport'])
 if not dlg.OK:
     core.quit()  # the user hit cancel, so exit
 
-# find parameter file
-if expInfo['paramsFile'] == 'Load...':
-    dlgResult = gui.fileOpenDlg(prompt='Select parameters file', tryFilePath=os.getcwd(),
-                                allowed="PICKLE files (.psydat)|.psydat|All files (.*)|")
-    expInfo['paramsFile'] = dlgResult[0]
-# load parameter file
-if expInfo['paramsFile'] not in ['DEFAULT', None]:  # otherwise, just use defaults.
-    # load params file
-    params = fromFile(expInfo['paramsFile'])
-
-# transfer skipPrompts from expInfo (gui input) to params (logged parameters)
 params['painSupport'] = expInfo['painSupport']
 
 # save experimental info
@@ -143,9 +115,10 @@ logging.log(level=logging.INFO, msg='---START PARAMETERS---')
 logging.log(level=logging.INFO, msg='filename: %s' % filename)
 logging.log(level=logging.INFO, msg='subject: %s' % expInfo['subject'])
 logging.log(level=logging.INFO, msg='session: %s' % expInfo['session'])
-logging.log(level=logging.INFO, msg='LHeat: %s' % expInfo['LHeat'])
-logging.log(level=logging.INFO, msg='MHeat: %s' % expInfo['MHeat'])
-logging.log(level=logging.INFO, msg='HHeat: %s' % expInfo['HHeat'])
+logging.log(level=logging.INFO, msg='T2: %s' % expInfo['T2'])
+logging.log(level=logging.INFO, msg='T4: %s' % expInfo['T4'])
+logging.log(level=logging.INFO, msg='T6: %s' % expInfo['T6'])
+logging.log(level=logging.INFO, msg='T8: %s' % expInfo['T8'])
 logging.log(level=logging.INFO, msg='date: %s' % dateStr)
 # log everything in the params struct
 for key in sorted(params.keys()):  # in alphabetical order
@@ -459,27 +432,33 @@ def SetPort(color, size, block):
     SetPortData((color - 1) * 6 ** 2 + (size - 1) * 6 + (block))
     if size == 1:
         if color == 1:
-            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['LHeat']))]
+            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T2']))]
             logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
         elif color == 2:
-            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['MHeat']))]
+            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T4']))]
             logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
         elif color == 3:
-            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['HHeat']))]
+            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T6']))]
             logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
         elif color == 4:
-            if randBlack[randBlackCount] == 2:
-                code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['HHeat']))]
-                logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-                randBlackCount += 1
-            elif randBlack[randBlackCount] == 1:
-                code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['MHeat']))]
-                logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-                randBlackCount += 1
-            elif randBlack[randBlackCount] == 0:
-                code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['LHeat']))]
-                logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-                randBlackCount += 1
+            code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T8']))]
+            logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
+
+        # FOR BLACK RANDOM - COMMENTED
+        # elif color == 4:
+        #     if randBlack[randBlackCount] == 2:
+        #         code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T6']))]
+        #         logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
+        #         randBlackCount += 1
+        #     elif randBlack[randBlackCount] == 1:
+        #         code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T4']))]
+        #         logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
+        #         randBlackCount += 1
+        #     elif randBlack[randBlackCount] == 0:
+        #         code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T2']))]
+        #         logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
+        #         randBlackCount += 1
+
         if params['painSupport']:
             response = my_pathway.program(code.iat[0, 1])
             my_pathway.start()
