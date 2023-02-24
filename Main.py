@@ -69,6 +69,9 @@ params = {
     'codeReady': 145,  # parallel port code for Get ready stimulus
     'codeVAS': 142,  # parallel port code for 3 VASs
     'convExcel': 'tempConv.xlsx',  # excel file with temp to binary code mappings
+    'image1' : 'img/image1.png',
+    'image2' : 'img/image2.png',
+    'image3' : 'img/image3.png',
 }
 
 # ========================== #
@@ -186,6 +189,13 @@ message2 = visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000', al
 # load VAS Qs & options
 [questions, options, answers] = BasicPromptTools.ParseQuestionFile(params['questionFile'])
 print('%d questions loaded from %s' % (len(questions), params['questionFile']))
+
+# load Instructions images
+image1 = visual.ImageStim(win, image=params['image1'], pos=(0, 0))
+image2 = visual.ImageStim(win, image=params['image2'], pos=(0, 0))
+image3 = visual.ImageStim(win, image=params['image3'], pos=(0, 0))
+slides = [image1, image2, image3]
+
 
 # get stimulus files
 
@@ -842,8 +852,15 @@ for block in range(0, params['nBlocks']):
     if block == 0: #  If it's the first block, runs a mood VAS rating task and displays some prompts to the participant.
         SetPortData(params['codeVAS'])
         RunMoodVas(questions_vas1, options_vas1, name='PreVAS')
-        WaitForFlipTime()
         # RunPrompts() We don't use "Run Prompts", but give instructions as text
+        # Present each slide and wait for spacebar input to advance to the next slide
+        for slide in slides:
+            slide.draw()
+            win.flip()
+            event.waitKeys(keyList=['space'])
+        WaitForFlipTime()
+
+
 
     if block == 2: # If it's the second block, stops drawing the anxiety slider and fixation cross, runs a mood VAS rating task, displays some prompts, and sets the next stimulus presentation time to 4-6 seconds in the future.
         print("got to block 2 if statement")
