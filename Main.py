@@ -653,10 +653,6 @@ def RunMoodVas(questions, options, name='MoodVas'):
 
         RunVas(question, option, questionDur=float("inf"), isEndedByKeypress=True, name=name)
 
-        # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-        # win.saveMovieFrames('img/' + imgName + '.jpg')
-    # RunVas(questions,options,questionDur=float("inf"), isEndedByKeypress=True,name=name)
-
     BasicPromptTools.RunPrompts([], [reverse_string("מנוחה קצרה")], win, message1, message2)
     tNextFlip[0] = globalClock.getTime()
 
@@ -687,17 +683,9 @@ def CoolDown():
                                'Rating'])
     df.to_csv('avgFile%s.csv' % expInfo['subject'])
 
-    # # display cool-down message
-    # tracker.sendMessage('TRIAL_RESULT 0')
-    # tracker.sendMessage('TRIALID %d' % 0)
-    # tracker.sendMessage('!V IMGLOAD CENTER %s %d %d %d %d' % ('img/end.jpg', 1024 / 2, 768 / 2, 1024, 768))
-
     message1.setText("That's the end! ")
     message2.setText("Press 'q' or 'escape' to end the session.")
     win.logOnFlip(level=logging.EXP, msg='Display TheEnd')
-    # Save Screenshot
-    # win.getMovieFrame()  # Defaults to front buffer, I.e. what's on screen now.
-    # win.saveMovieFrames('img/end.jpg')
 
     message1.draw()
     message2.draw()
