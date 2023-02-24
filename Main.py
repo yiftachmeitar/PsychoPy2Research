@@ -633,9 +633,6 @@ def RunMoodVas(questions, options, name='MoodVas'):
     BasicPromptTools.RunPrompts([], [reverse_string("מנוחה קצרה")], win, message1, message2)
     tNextFlip[0] = globalClock.getTime()
 
-    fixationCross.draw()
-    win.logOnFlip(level=logging.EXP, msg='Display Fixation')
-
     # wait until it's time to show screen
     WaitForFlipTime()
     # show screen and update next flip time
@@ -660,10 +657,12 @@ def CoolDown():
                                'Rating'])
     df.to_csv('avgFile%s.csv' % expInfo['subject'])
 
-    message1.setText("That's the end! ")
-    message2.setText("Press 'q' or 'escape' to end the session.")
+    message1.setText(reverse_string("הגענו לסוף הניסוי"))
+    message2.setText(reverse_string("לחץ על אסקייפ כדי לסיים"))
     win.logOnFlip(level=logging.EXP, msg='Display TheEnd')
 
+    message1.setFont('Arial Hebrew')
+    message2.setFont('Arial Hebrew')
     message1.draw()
     message2.draw()
     win.flip()
@@ -685,6 +684,8 @@ def BetweenBlock(params):
     message2.setText("Press SPACE to continue.")
     win.logOnFlip(level=logging.EXP, msg='BetweenBlock')
 
+    message1.setFont('Arial Hebrew')
+    message2.setFont('Arial Hebrew')
     message1.draw()
     message2.draw()
     win.flip()
@@ -869,6 +870,16 @@ for block in range(0, params['nBlocks']):
             tNextFlip[0] = globalClock.getTime() + random.randint(4, 6)
 
     # wait before first stimulus
+    fixationCross.draw()
+    win.logOnFlip(level=logging.EXP, msg='Display Fixation')
+    win.flip() # Flip the window to display the fixation cross
+    core.wait(1) # Change to that: random.randint(4, 6)
+
+    # wait until it's time to show screen
+    WaitForFlipTime()
+    # show screen and update next flip time
+    win.flip()
+    AddToFlipTime(1)
 
     win.callOnFlip(SetPortData, data=params['codeBaseline']) # Calls a function to set the port data to the baseline code.
 
@@ -894,7 +905,6 @@ for block in range(0, params['nBlocks']):
 
         color = color_list[trial] # Selects the color for this trial.
         ratings = anxSlider
-        # GrowingSquare(color, block, trial, ratings, params)
 
         # Calls the GrowingSquare function to present the stimulus, and records the start time and phase start time.
         trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider, params, tracker)
