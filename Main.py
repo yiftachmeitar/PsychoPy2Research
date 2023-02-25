@@ -28,7 +28,7 @@ params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
     'nTrials': 2,  # number of squares in each block
-    'nBlocks': 1,  # number of blocks (aka runs) - need time to move electrode in between
+    'nBlocks': 2,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -282,23 +282,33 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     if color == 1:
         col = 'darkseagreen'
         colCode = int('8fbc8f', 16)
+        colorName='Green'
     elif color == 2:
         col = 'khaki'
         colCode = int('F0E68C', 16)
+        colorName='Yellow'
     elif color == 3:
         col = 'lightcoral'
         colCode = int('F08080', 16)
+        colorName='Red'
     elif color == 4:
         col = 'black'
         colCode = int('000000', 16)
     else:
         col = 'gray'
         colCode = int('808080', 16)
+        colorName='Black'
 
     trialStart = globalClock.getTime()
     phaseStart = globalClock.getTime()
-    rect = visual.Rect(win=win, units='norm', size=0.1, fillColor=col, lineColor=col, lineWidth=20)
-    rect.draw()
+
+    # Load pre-defined images of square at different sizes
+    squareImages = []
+    for i in range(1, 6):
+        squareImages.append(visual.ImageStim(win, image=f"Circles2/{color}{colorName}_{i}.JPG", pos=(0, 0)))
+
+    # rect = visual.Rect(win=win, units='norm', size=0.1, fillColor=col, lineColor=col, lineWidth=20)
+    # rect.draw()
     WaitForFlipTime()
     # gray color = during the instructions
     if col != 'gray':
@@ -306,34 +316,46 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     win.flip()
 
     Rbefore = ratings.getRating()
-    # loop to continuously grow the square (180 * .0665 = ~12 sec to grow to total size)
-    for i in range(180):
-        timer = core.Clock()
-        timer.add(0.0665)
+    # CHANGED FROM RANGE 100 TO 5 TO CANCEL CONTINUOUS GROWING - loop to continuously grow the square (180 * .0665 = ~12 sec to grow to total size)
+    for i in range(5):
+        # timer = core.Clock()
+        # timer.add(0.0665)
 
-        while timer.getTime() < 0:
-            rect.draw()
-            win.flip()
+        # Set size of rating scale marker based on current square size
+        sizeRatio = squareImages[i].size[0] / squareImages[0].size[0]
+        ratings.markerSize = sizeRatio * 0.3
+
+        squareImages[i].draw()
+        win.flip()
+
+        # Wait for specified duration
+        core.wait(2)
+
+        # while timer.getTime() < 0:
+        #     rect.draw()
+        #     win.flip()
             # get new keys
-            newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
-            # check each keypress for escape keys
-            if len(newKeys) > 0:
-                for thisKey in newKeys:
-                    if thisKey[0] in ['q', 'escape']:  # escape keys
-                        CoolDown()  # exit gracefully
+        newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
+        # check each keypress for escape keys
+        if len(newKeys) > 0:
+            for thisKey in newKeys:
+                if thisKey[0] in ['q', 'escape']:  # escape keys
+                    CoolDown()  # exit gracefully
 
         R = ratings.getRating()
 
-        rect.size = rect.size + 0.0216
-        rect.draw()
-        win.flip()
+        # rect.size = rect.size + 0.0216
+        # rect.draw()
+        # win.flip()
 
-        Rbefore = R
+        # Rbefore = R
 
         if col != 'gray':
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "square",
                       globalClock.getTime() - phaseStart, ratings.getRating())
-        ++i
+
+    # Set size of rating scale marker to maximum size
+    ratings.markerSize = 0.3
 
     if col != 'gray':
         # print(time.time())
@@ -346,12 +368,14 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         timer = core.Clock()
         timer.add(3 + random.sample(sleepRand, 1)[0])
         while timer.getTime() < 0:
-            rect.draw()
+            # rect.draw()
+            squareImages[-1].draw()
 
             R = ratings.getRating()
 
-            rect.size = rect.size + 0.0216
-            rect.draw()
+
+            # rect.size = rect.size + 0.0216
+            # rect.draw()
             win.flip()
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
                       globalClock.getTime() - phaseStart, ratings.getRating())
@@ -367,48 +391,48 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         # give medoc time to give heat before signalling to stop
         timer = core.Clock()
         timer.add(5)
-        while timer.getTime() < 0:
-            rect.draw()
-
-            # R = anxSlider.getRating()
-            R = ratings.getRating()
-
-            rect.size = rect.size + 0.0216
-            rect.draw()
-            win.flip()
-
-            BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
-                      globalClock.getTime() - phaseStart, ratings.getRating())
-            # get new keys
-            newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
-            # check each keypress for escape keys
-            if len(newKeys) > 0:
-                for thisKey in newKeys:
-                    if thisKey[0] in ['q', 'escape']:  # escape keys
-                        CoolDown()  # exit gracefully
+        # while timer.getTime() < 0:
+        #     rect.draw()
+        #
+        #     # R = anxSlider.getRating()
+        #     R = ratings.getRating()
+        #
+        #     rect.size = rect.size + 0.0216
+        #     rect.draw()
+        #     win.flip()
+        #
+        #     BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
+        #               globalClock.getTime() - phaseStart, ratings.getRating())
+        #     # get new keys
+        #     newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
+        #     # check each keypress for escape keys
+        #     if len(newKeys) > 0:
+        #         for thisKey in newKeys:
+        #             if thisKey[0] in ['q', 'escape']:  # escape keys
+        #                 CoolDown()  # exit gracefully
         if params['painSupport']:
             response = my_pathway.stop()
         # Flush the key buffer and mouse movements
         event.clearEvents()
         # Wait for relevant key press or 'painDur' seconds
-        while (globalClock.getTime() < tNextFlip[0]):  # until it's time for the next frame
-            rect.draw()
-
-            R = ratings.getRating()
-
-            rect.size = rect.size + 0.0216
-            rect.draw()
-            win.flip()
-
-            BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
-                      globalClock.getTime() - phaseStart, ratings.getRating())
-            # get new keys
-            newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
-            # check each keypress for escape keys
-            if len(newKeys) > 0:
-                for thisKey in newKeys:
-                    if thisKey[0] in ['q', 'escape']:  # escape keys
-                        CoolDown()  # exit gracefully
+        # while (globalClock.getTime() < tNextFlip[0]):  # until it's time for the next frame
+        #     rect.draw()
+        #
+        #     R = ratings.getRating()
+        #
+        #     rect.size = rect.size + 0.0216
+        #     rect.draw()
+        #     win.flip()
+        #
+        #     BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
+        #               globalClock.getTime() - phaseStart, ratings.getRating())
+        #     # get new keys
+        #     newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
+        #     # check each keypress for escape keys
+        #     if len(newKeys) > 0:
+        #         for thisKey in newKeys:
+        #             if thisKey[0] in ['q', 'escape']:  # escape keys
+        #                 CoolDown()  # exit gracefully
         # print(time.time())
     return trialStart, phaseStart
 
@@ -937,7 +961,7 @@ for block in range(0, params['nBlocks']):
 
     # finish recording
     # if block == 2 or block == 5:
-    if block == 2 or block == (params['nBlocks21'] - 1):
+    if block == 2 or block == (params['nBlocks'] - 1):
         print ("I got to the last if statement")
 
 
