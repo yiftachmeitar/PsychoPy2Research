@@ -307,8 +307,6 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     for i in range(1, 6):
         squareImages.append(visual.ImageStim(win, image=f"Circles2/{color}{colorName}_{i}.JPG", pos=(0, 0)))
 
-    # rect = visual.Rect(win=win, units='norm', size=0.1, fillColor=col, lineColor=col, lineWidth=20)
-    # rect.draw()
     WaitForFlipTime()
     # gray color = during the instructions
     if col != 'gray':
@@ -316,10 +314,8 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     win.flip()
 
     Rbefore = ratings.getRating()
-    # CHANGED FROM RANGE 100 TO 5 TO CANCEL CONTINUOUS GROWING - loop to continuously grow the square (180 * .0665 = ~12 sec to grow to total size)
     for i in range(5):
-        # timer = core.Clock()
-        # timer.add(0.0665)
+        timer = core.Clock()
 
         # Set size of rating scale marker based on current square size
         sizeRatio = squareImages[i].size[0] / squareImages[0].size[0]
@@ -331,10 +327,7 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         # Wait for specified duration
         core.wait(2)
 
-        # while timer.getTime() < 0:
-        #     rect.draw()
-        #     win.flip()
-            # get new keys
+        # get new keys
         newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
         # check each keypress for escape keys
         if len(newKeys) > 0:
@@ -344,12 +337,6 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
 
         R = ratings.getRating()
 
-        # rect.size = rect.size + 0.0216
-        # rect.draw()
-        # win.flip()
-
-        # Rbefore = R
-
         if col != 'gray':
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "square",
                       globalClock.getTime() - phaseStart, ratings.getRating())
@@ -358,7 +345,7 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     ratings.markerSize = 0.3
 
     if col != 'gray':
-        # print(time.time())
+        print(time.time())
         SetPort(color, 2, block)
         phaseStart = globalClock.getTime()
         tNextFlip[0] = globalClock.getTime() + (params['painDur'])
@@ -373,9 +360,6 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
 
             R = ratings.getRating()
 
-
-            # rect.size = rect.size + 0.0216
-            # rect.draw()
             win.flip()
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
                       globalClock.getTime() - phaseStart, ratings.getRating())
@@ -391,49 +375,12 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         # give medoc time to give heat before signalling to stop
         timer = core.Clock()
         timer.add(5)
-        # while timer.getTime() < 0:
-        #     rect.draw()
-        #
-        #     # R = anxSlider.getRating()
-        #     R = ratings.getRating()
-        #
-        #     rect.size = rect.size + 0.0216
-        #     rect.draw()
-        #     win.flip()
-        #
-        #     BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
-        #               globalClock.getTime() - phaseStart, ratings.getRating())
-        #     # get new keys
-        #     newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
-        #     # check each keypress for escape keys
-        #     if len(newKeys) > 0:
-        #         for thisKey in newKeys:
-        #             if thisKey[0] in ['q', 'escape']:  # escape keys
-        #                 CoolDown()  # exit gracefully
+
         if params['painSupport']:
             response = my_pathway.stop()
         # Flush the key buffer and mouse movements
         event.clearEvents()
-        # Wait for relevant key press or 'painDur' seconds
-        # while (globalClock.getTime() < tNextFlip[0]):  # until it's time for the next frame
-        #     rect.draw()
-        #
-        #     R = ratings.getRating()
-        #
-        #     rect.size = rect.size + 0.0216
-        #     rect.draw()
-        #     win.flip()
-        #
-        #     BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
-        #               globalClock.getTime() - phaseStart, ratings.getRating())
-        #     # get new keys
-        #     newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
-        #     # check each keypress for escape keys
-        #     if len(newKeys) > 0:
-        #         for thisKey in newKeys:
-        #             if thisKey[0] in ['q', 'escape']:  # escape keys
-        #                 CoolDown()  # exit gracefully
-        # print(time.time())
+
     return trialStart, phaseStart
 
 
@@ -702,8 +649,8 @@ def BetweenBlock(params):
     # stop autoDraw
     anxSlider.autoDraw = False
     AddToFlipTime(1)
-    message1.setText("This concludes the current block. Please wait for further instruction before continuing.")
-    message2.setText("Press SPACE to continue.")
+    message1.setText(reverse_string("הסתיים הבלוק הנוכחי"))
+    message2.setText(reverse_string("לחץ על מקש הרווח כדי להתקדם"))
     win.logOnFlip(level=logging.EXP, msg='BetweenBlock')
 
     message1.setFont('Arial Hebrew')
