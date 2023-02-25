@@ -649,19 +649,22 @@ def BetweenBlock(params):
     # stop autoDraw
     anxSlider.autoDraw = False
     AddToFlipTime(1)
-    message1.setText(reverse_string("הסתיים הבלוק הנוכחי"))
-    message2.setText(reverse_string("לחץ על מקש הרווח כדי להתקדם"))
-    win.logOnFlip(level=logging.EXP, msg='BetweenBlock')
+    tNextFlip[0] = globalClock.getTime() + 2.0
 
-    message1.setFont('Arial Hebrew')
-    message2.setFont('Arial Hebrew')
-    message1.draw()
-    message2.draw()
-    win.flip()
-
-    thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
-    if thisKey:
-        tNextFlip[0] = globalClock.getTime() + 2.0
+    # COMMENTED OUT NEED TO PRESS SPACE BEFORE PROCEEDING TO NEXT SLIDE
+    # message1.setText(reverse_string("הסתיים הבלוק הנוכחי"))
+    # message2.setText(reverse_string("לחץ על מקש הרווח כדי להתקדם"))
+    # win.logOnFlip(level=logging.EXP, msg='BetweenBlock')
+    #
+    # message1.setFont('Arial Hebrew')
+    # message2.setFont('Arial Hebrew')
+    # message1.draw()
+    # message2.draw()
+    # win.flip()
+    #
+    # thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
+    # if thisKey:
+    #     tNextFlip[0] = globalClock.getTime() + 2.0
 
 
 def integrateData(ratingScale, arrayLength, iStim, avgArray, block):
