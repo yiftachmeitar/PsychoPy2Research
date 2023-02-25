@@ -27,8 +27,8 @@ from HelperFunctions import reverse_string
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 2,  # number of squares in each block
-    'nBlocks': 2,  # number of blocks (aka runs) - need time to move electrode in between
+    'nTrials': 1,  # number of squares in each block
+    'nBlocks': 3,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -294,6 +294,7 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
     elif color == 4:
         col = 'black'
         colCode = int('000000', 16)
+        colorName = 'Black'
     else:
         col = 'gray'
         colCode = int('808080', 16)
@@ -842,11 +843,12 @@ for block in range(0, params['nBlocks']):
         fixation.autoDraw = False
         RunMoodVas(questions_vas2, options_vas2, name='MidRun')
         WaitForFlipTime()
+        tNextFlip[0] = globalClock.getTime() + random.randint(2, 4)
 
-        BasicPromptTools.RunPrompts(["Thank you for your responses."], ["Press the space bar to continue."], win,message1, message2)
-        thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
-        if thisKey:
-            tNextFlip[0] = globalClock.getTime() + random.randint(4, 6)
+        # BasicPromptTools.RunPrompts(["Thank you for your responses."], ["Press the space bar to continue."], win,message1, message2)
+        # thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
+        # if thisKey:
+        #     tNextFlip[0] = globalClock.getTime() + random.randint(4, 6)
 
     # wait before first stimulus
     fixationCross.draw()
