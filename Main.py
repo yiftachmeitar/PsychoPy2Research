@@ -49,6 +49,8 @@ params = {
     'moodQuestionFile2': 'Questions/ERVasRatingScales.txt',
     # Name of text file containing mood Q&As presented after 3rd block
     'moodQuestionFile3': 'Questions/ERVas4RatingScales.txt',
+    # Name of text file containing pain Rating Scale presented after each trial
+    'MoodRatingPainFile': 'Questions/MoodRatingPainFile.txt',
     # Name of text file containing mood Q&As presented after run
     'questionSelectKey': '3',  # select answer for VAS
     'questionSelectAdvances': True,  # will locking in an answer advance past an image rating?
@@ -238,6 +240,9 @@ print('%d questions loaded from %s' % (len(questions_vas1), params['moodQuestion
 print('%d questions loaded from %s' % (len(questions_vas2), params['moodQuestionFile2']))
 
 [questions_vas3, options_vas3, answers_vas3] = BasicPromptTools.ParseQuestionFile(params['moodQuestionFile3'])
+print('%d questions loaded from %s' % (len(questions_vas3), params['moodQuestionFile3']))
+
+[questions_RatingPain, options_RatingPain, answers_RatingPain] = BasicPromptTools.ParseQuestionFile(params['MoodRatingPainFile'])
 print('%d questions loaded from %s' % (len(questions_vas3), params['moodQuestionFile3']))
 
 [questions_prac, options_prac, answers_prac] = BasicPromptTools.ParseQuestionFile(params['introPractice'])
@@ -841,9 +846,22 @@ for block in range(0, params['nBlocks']):
         print("got to block 2 if statement")
         anxSlider.autoDraw = False
         fixation.autoDraw = False
+
+        # Run VAS after 2nd block
         RunMoodVas(questions_vas2, options_vas2, name='MidRun')
-        WaitForFlipTime()
-        tNextFlip[0] = globalClock.getTime() + random.randint(2, 4)
+
+        # Rest slide
+        message1.setText(reverse_string("מנוחה קצרה"))
+        message1.setFont('Arial Hebrew')
+        message1.draw()
+        win.flip()
+
+        timer = core.Clock()
+        timer.add(random.randint(1, 2))
+        while timer.getTime() < 0:
+            win.flip()
+
+        tNextFlip[0] = globalClock.getTime() + random.randint(1, 2)
 
         # BasicPromptTools.RunPrompts(["Thank you for your responses."], ["Press the space bar to continue."], win,message1, message2)
         # thisKey = event.waitKeys(keyList=['space'])  # use space bar to avoid accidental advancing
@@ -890,12 +908,14 @@ for block in range(0, params['nBlocks']):
         # Calls the GrowingSquare function to present the stimulus, and records the start time and phase start time.
         trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider, params, tracker)
         win.flip() # Flips the screen and waits for 2 seconds.
-        core.wait(2)
+        core.wait(1)
 
         # Sets the next stimulus presentation time.
         tNextFlip[0] = globalClock.getTime() + (painISI[painITI])
         painITI += 1
-
+        RunMoodVas(questions_RatingPain, options_RatingPain, name='PainRatingScale')
+        WaitForFlipTime()
+        tNextFlip[0] = globalClock.getTime() + random.randint(2, 4)
 
     ### THE FIXATION "SAFE" AND "GET READY" WAS DELETED FROM HERE ###
 
