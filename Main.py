@@ -24,8 +24,8 @@ from HelperFunctions import reverse_string
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 1,  # number of squares in each block
-    'nBlocks': 1,  # number of blocks (aka runs) - need time to move electrode in between
+    'nTrials': 2,  # number of squares in each block
+    'nBlocks': 2,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -221,7 +221,7 @@ sleepRand = [0, 0.5, 1, 1.5, 2]  # slightly vary onset of heat pain
 
 # for "random" ITI avg 15 sec
 painITI = 0
-painISI = [13, 14, 16, 17, 13, 14, 16, 17]
+painISI = [1, 1, 1, 1, 1, 1, 1, 1]
 random.shuffle(painISI)
 
 # read questions and answers from text files for instructions text, 3 Vass, and practice scale questions
@@ -523,7 +523,7 @@ def BetweenBlock(params):
         win.flip()  # to update ratingScale
     # stop autoDraw
     AddToFlipTime(1)
-    tNextFlip[0] = globalClock.getTime() + 2.0
+    tNextFlip[0] = globalClock.getTime() + 1.0
 
     # COMMENTED OUT NEED TO PRESS SPACE BEFORE PROCEEDING TO NEXT SLIDE
     # message1.setText(reverse_string("הסתיים הבלוק הנוכחי"))
