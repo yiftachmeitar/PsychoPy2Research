@@ -8,12 +8,9 @@ from psychopy import core, gui, data, event, sound, logging
 import pandas as pd
 from psychopy.tools.filetools import fromFile, toFile  # saving and loading parameter files
 import time as ts, numpy as np  # for timing and array operations
-from numpy import trapz
-import os
 import BasicPromptTools  # for loading/presenting prompts and questions
 import RatingScales
 import random  # for randomization of trials
-import math
 from devices import Pathway
 from HelperFunctions import reverse_string
 # from psychopy import visual # visual causes a bug in the guis, so it's declared after all GUIs run.
@@ -328,8 +325,6 @@ def GrowingSquare(color, block, trial, params):
     win.flip()
 
     for i in range(5):
-        timer = core.Clock()
-
         # Set size of rating scale marker based on current square size
         sizeRatio = squareImages[i].size[0] / squareImages[0].size[0]
 
