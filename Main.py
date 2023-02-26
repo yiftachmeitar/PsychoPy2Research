@@ -711,54 +711,6 @@ def BehavFile(absTime, block, trial, color, trialTime, phase, phaseTime):
     list = [absTime, block, trial, color, trialTime, phase, phaseTime]
     listlist.append(list)
 
-
-# =========================== #
-# ======= RUN PROMPTS ======= #
-# =========================== #
-def RunPrompts():
-
-    # display prompts
-    if not params['skipPrompts']:
-        BasicPromptTools.RunPrompts([reverse_string("כעת נתאמן על סקלת הדירוג בה נשתמש לניסוי")],
-                                    [reverse_string("לחץ על מקש הרווח על מנת להמשיך")], win, message1, message2)
-
-        pracScale = PersistentScale(questions_prac, options_prac, win, name='pracScale', pos=(0., -0.70),
-                                    scaleTextPos=[0., -0.50],
-                                    textColor=params['textColor'], stepSize=params['vasStepSize'],
-                                    labelYPos=-0.8, markerSize=0.1, tickHeight=0.0, tickLabelWidth=0.0,
-                                    downKey=params['questionDownKey'], upKey=params['questionUpKey'],
-                                    selectKey=params['questionSelectKey'],
-                                    hideMouse=True, params=params)
-
-        # Get Ready and Safe prompts - NOT USING
-        # BasicPromptTools.RunPrompts(topPrompts1, bottomPrompts1, win, message1, message2)
-        # BasicPromptTools.RunPrompts(topPrompts2, bottomPrompts2, win, message1, message2)
-
-        trialStart = GrowingSquare(5, 0, 0, pracScale, params, "")
-        event.waitKeys()
-
-        WaitForFlipTime()
-        AddToFlipTime(1)
-        stimImage.setImage(promptImage)
-        stimImage.autoDraw = True;
-        win.flip()
-
-        key = event.waitKeys()
-        stimImage.autoDraw = False;
-
-        tNextFlip[0] = globalClock.getTime()
-        WaitForFlipTime()
-
-        BasicPromptTools.RunPrompts(topPrompts, bottomPrompts, win, message1, message2)
-        thisKey = event.waitKeys()  # use if need to repeat instructions
-        if thisKey[0] == 'r':
-            RunPrompts()
-
-        BasicPromptTools.RunPrompts(["We are about to start !"], ["Press any button to continue"], win, message1,
-                                    message2)
-
-    tNextFlip[0] = globalClock.getTime() + 5.0
-
 # =========================== #
 # ===== MAIN EXPERIMENT ===== #
 # =========================== #
