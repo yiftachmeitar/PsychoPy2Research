@@ -687,26 +687,6 @@ def integrateData(ratingScale, arrayLength, iStim, avgArray, block):
     arrayLength = len(ratingScale.getHistory())
     return arrayLength
 
-
-def EveryHalf(ratingScale):
-    x = [a[1] for a in ratingScale.getHistory()]
-    y = [a[0] for a in ratingScale.getHistory()]
-    countTime = round(x[-1])
-    for b in np.arange(0, countTime, 0.5):
-        avgFile.write(str(b) + ',')
-    avgFile.write('\n')
-    i = 0
-    for a in range(len(x)):
-        if x[a] == i:
-            avgFile.write(str(y[a]) + ',')
-            i = i + 0.5
-        elif x[a] > i:
-            missed = math.ceil((x[a] - i) / 0.5)
-            avgFile.write((str(y[a - 1]) + ',') * missed)
-            i = i + 0.5 * missed
-    avgFile.write('\n\n')
-
-
 def BehavFile(absTime, block, trial, color, trialTime, phase, phaseTime):
     list = [absTime, block, trial, color, trialTime, phase, phaseTime]
     listlist.append(list)
