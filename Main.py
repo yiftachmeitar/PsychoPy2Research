@@ -74,6 +74,8 @@ params = {
     'image1' : 'img/image1.png',
     'image2' : 'img/image2.png',
     'image3' : 'img/image3.png',
+    'techInstructionImage1': 'img/techInstructionImage1.png',
+    'techInstructionImage2': 'img/techInstructionImage2.png',
 }
 
 # ========================== #
@@ -192,11 +194,17 @@ message2 = visual.TextStim(win, pos=[0, -.5], wrapWidth=1.5, color='#000000', al
 [questions, options, answers] = BasicPromptTools.ParseQuestionFile(params['questionFile'])
 print('%d questions loaded from %s' % (len(questions), params['questionFile']))
 
+# load technical instruction images
+techInstructionImage1 = visual.ImageStim(win, image=params['techInstructionImage1'], pos=(0, 0));
+techInstructionImage2 = visual.ImageStim(win, image=params['techInstructionImage2'], pos=(0, 0));
+technicalInstructionsSlides = [techInstructionImage1, techInstructionImage2]
+
+
 # load Instructions images
 image1 = visual.ImageStim(win, image=params['image1'], pos=(0, 0))
 image2 = visual.ImageStim(win, image=params['image2'], pos=(0, 0))
 image3 = visual.ImageStim(win, image=params['image3'], pos=(0, 0))
-slides = [image1, image2, image3]
+instructionsSlides = [image1, image2, image3]
 
 
 # get stimulus files
@@ -830,11 +838,16 @@ avgArray = []
 for block in range(0, params['nBlocks']):
 
     if block == 0: #  If it's the first block, runs a mood VAS rating task and displays some prompts to the participant.
+        for slide in technicalInstructionsSlides:
+            slide.draw()
+            win.flip()
+            event.waitKeys(keyList=['space'])
+        WaitForFlipTime()
         SetPortData(params['codeVAS'])
         RunMoodVas(questions_vas1, options_vas1, name='PreVAS')
         # RunPrompts() We don't use "Run Prompts", but give instructions as text
         # Present each slide and wait for spacebar input to advance to the next slide
-        for slide in slides:
+        for slide in instructionsSlides:
             slide.draw()
             win.flip()
             event.waitKeys(keyList=['space'])
