@@ -712,52 +712,6 @@ def BehavFile(absTime, block, trial, color, trialTime, phase, phaseTime):
     listlist.append(list)
 
 
-def MakePersistentVAS(question, options, win, name='Question', textColor='black', pos=(0., -0.70), stepSize=1.,
-                      scaleTextPos=[0., -0.50],
-                      labelYPos=-0.75, markerSize=0.1, tickHeight=0.0, tickLabelWidth=0.0,
-                      downKey=params['questionDownKey'], upKey=params['questionUpKey'], selectKey=[], hideMouse=True):
-    # Make triangle
-    markerStim = visual.ShapeStim(win, lineColor=textColor, fillColor=textColor, vertices=(
-    (-markerSize / 2., markerSize * np.sqrt(5. / 4.)), (markerSize / 2., markerSize * np.sqrt(5. / 4.)), (0, 0)),
-                                  units='norm', closeShape=True, name='triangle');
-
-    tickMarks = np.linspace(0, 36, len(options)).tolist()
-    if tickLabelWidth == 0.0:  # if default value, determine automatically to fit all tick mark labels
-        tickWrapWidth = (tickMarks[1] - tickMarks[0]) * 0.9 / 36  # *.9 for extra space, /100 for norm units
-    else:  # use user-specified value
-        tickWrapWidth = tickLabelWidth;
-
-    # Create ratingScale
-    ratingScale = visual.RatingScale(win, scale=question, \
-                                     low=0., high=36., markerStart=18., precision=1, labels=options,
-                                     tickMarks=tickMarks, tickHeight=tickHeight, \
-                                     marker=markerStim, markerColor=textColor, markerExpansion=1, singleClick=False,
-                                     disappear=False, \
-                                     textSize=0.8, textColor=textColor, textFont='Arial Hebrew', showValue=False, \
-                                     showAccept=False, acceptKeys=selectKey, acceptPreText='key, click',
-                                     acceptText='accept?', acceptSize=1.0, \
-                                     leftKeys=downKey, rightKeys=upKey, respKeys=(), lineColor=textColor, skipKeys=[], \
-                                     mouseOnly=False, noMouse=hideMouse, size=1.0, stretch=1.75, pos=pos, minTime=0.4,
-                                     maxTime=np.inf, \
-                                     flipVert=False, depth=0, name=name, autoLog=True)
-    # Fix text wrapWidth
-    for iLabel in range(len(ratingScale.labels)):
-        ratingScale.labels[iLabel].wrapWidth = tickWrapWidth
-        ratingScale.labels[iLabel].pos = (ratingScale.labels[iLabel].pos[0], labelYPos)
-        ratingScale.labels[iLabel].alignHoriz = 'center'
-    # Move main text
-    ratingScale.scaleDescription.pos = scaleTextPos
-
-    # Make it persistent by setting autoDraw to True
-    ratingScale.autoDraw = True;
-
-    # Display until time runs out (or key is pressed, if specified)
-    win.logOnFlip(level=logging.EXP, msg='Display %s' % name)
-    win.flip()
-
-    return ratingScale
-
-
 # =========================== #
 # ======= RUN PROMPTS ======= #
 # =========================== #
