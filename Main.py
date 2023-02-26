@@ -665,28 +665,6 @@ def BetweenBlock(params):
     # if thisKey:
     #     tNextFlip[0] = globalClock.getTime() + 2.0
 
-
-def integrateData(ratingScale, arrayLength, iStim, avgArray, block):
-    thisHistory = ratingScale.getHistory()[arrayLength - 1:]
-    logging.log(level=logging.DATA, msg='RatingScale %s: history=%s' % (finalImages[iStim], thisHistory))
-    if len(avgArray) == 0:
-        avgFile.write('%s,' % (block + 1))
-        avgFile.write(finalImages[iStim][9:-6] + ',')
-    x = [a[1] for a in thisHistory]
-    y = [a[0] for a in thisHistory]
-    if len(thisHistory) == 1:
-        avgRate = y[0]
-    else:
-        avgRate = trapz(y, x) / (x[-1] - x[0])
-    avgArray.append(avgRate)
-    logging.log(level=logging.DATA, msg='RatingScale %s: avgRate=%s' % (finalImages[iStim], avgRate))
-    avgFile.write('%.3f,' % (avgRate))
-    if len(avgArray) == 5:
-        avgFile.write(str(sum(avgArray) / float(len(avgArray))) + '\n')
-        avgArray *= 0
-    arrayLength = len(ratingScale.getHistory())
-    return arrayLength
-
 def BehavFile(absTime, block, trial, color, trialTime, phase, phaseTime):
     list = [absTime, block, trial, color, trialTime, phase, phaseTime]
     listlist.append(list)
