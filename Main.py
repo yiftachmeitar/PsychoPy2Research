@@ -28,7 +28,7 @@ params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
     'nTrials': 1,  # number of squares in each block
-    'nBlocks': 3,  # number of blocks (aka runs) - need time to move electrode in between
+    'nBlocks': 1,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -287,7 +287,7 @@ def WaitForFlipTime():
 
 
 # main function that takes information to run through each trial
-def GrowingSquare(color, block, trial, ratings, params, tracker):
+def GrowingSquare(color, block, trial, params):
     import time
     global painITI
 
@@ -327,13 +327,11 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
         SetPort(color, 1, block)
     win.flip()
 
-    Rbefore = ratings.getRating()
     for i in range(5):
         timer = core.Clock()
 
         # Set size of rating scale marker based on current square size
         sizeRatio = squareImages[i].size[0] / squareImages[0].size[0]
-        ratings.markerSize = sizeRatio * 0.3
 
         squareImages[i].draw()
         win.flip()
@@ -349,14 +347,10 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
                 if thisKey[0] in ['q', 'escape']:  # escape keys
                     CoolDown()  # exit gracefully
 
-        R = ratings.getRating()
 
         if col != 'gray':
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "square",
-                      globalClock.getTime() - phaseStart, ratings.getRating())
-
-    # Set size of rating scale marker to maximum size
-    ratings.markerSize = 0.3
+                      globalClock.getTime() - phaseStart)
 
     if col != 'gray':
         print(time.time())
@@ -372,11 +366,9 @@ def GrowingSquare(color, block, trial, ratings, params, tracker):
             # rect.draw()
             squareImages[-1].draw()
 
-            R = ratings.getRating()
-
             win.flip()
             BehavFile(globalClock.getTime(), block + 1, trial + 1, color, globalClock.getTime() - trialStart, "full",
-                      globalClock.getTime() - phaseStart, ratings.getRating())
+                      globalClock.getTime() - phaseStart,)
             # get new keys
             newKeys = event.getKeys(keyList=['q', 'escape'], timeStamped=globalClock)
             # check each keypress for escape keys
@@ -626,18 +618,12 @@ def RunMoodVas(questions, options, name='MoodVas'):
 def CoolDown():
     # Stop drawing ratingScale (if it exists)
     try:
-        anxSlider.setAutoDraw(False)
-    except:
-        print('ratingScale does not exist.')
-    # Stop drawing stimImage (if it exists)
-    try:
         fixationCross.autoDraw = False
     except:
         print('fixation cross does not exist.')
 
     df = pd.DataFrame(listlist,
-                      columns=['Absolute Time', 'Block', 'Trial', 'Color', 'Trial Time', 'Phase', 'Phase Time',
-                               'Rating'])
+                      columns=['Absolute Time', 'Block', 'Trial', 'Color', 'Trial Time', 'Phase', 'Phase Time'])
     df.to_csv('avgFile%s.csv' % expInfo['subject'])
 
     message1.setText(reverse_string("הגענו לסוף הניסוי"))
@@ -661,7 +647,6 @@ def BetweenBlock(params):
     while (globalClock.getTime() < tNextFlip[0]):
         win.flip()  # to update ratingScale
     # stop autoDraw
-    anxSlider.autoDraw = False
     AddToFlipTime(1)
     tNextFlip[0] = globalClock.getTime() + 2.0
 
@@ -722,8 +707,8 @@ def EveryHalf(ratingScale):
     avgFile.write('\n\n')
 
 
-def BehavFile(absTime, block, trial, color, trialTime, phase, phaseTime, rating):
-    list = [absTime, block, trial, color, trialTime, phase, phaseTime, rating]
+def BehavFile(absTime, block, trial, color, trialTime, phase, phaseTime):
+    list = [absTime, block, trial, color, trialTime, phase, phaseTime]
     listlist.append(list)
 
 
@@ -857,7 +842,6 @@ for block in range(0, params['nBlocks']):
 
     if block == 2: # If it's the second block, stops drawing the anxiety slider and fixation cross, runs a mood VAS rating task, displays some prompts, and sets the next stimulus presentation time to 4-6 seconds in the future.
         print("got to block 2 if statement")
-        anxSlider.autoDraw = False
         fixation.autoDraw = False
 
         # Run VAS after 2nd block
@@ -895,15 +879,8 @@ for block in range(0, params['nBlocks']):
 
     win.callOnFlip(SetPortData, data=params['codeBaseline']) # Calls a function to set the port data to the baseline code.
 
-    tracker = ""
-
-    # Creates a new persistent visual analog scale (VAS) to measure anxiety.
-    anxSlider = MakePersistentVAS(win=win, question='', name='anxSlider', pos=(0, -0.7),
-                                  options=(reverse_string("לא כואב כלל"), reverse_string("כואב מאוד")), textColor=params['textColor'])
-
     # Waits for 2 seconds before displaying the first stimulus.
     while (globalClock.getTime() < tNextFlip[0] + 2):
-        R = anxSlider.getRating()
 
         win.flip()  # to update ratingScale
 
@@ -916,10 +893,9 @@ for block in range(0, params['nBlocks']):
     for trial in range(params['nTrials']):
 
         color = color_list[trial] # Selects the color for this trial.
-        ratings = anxSlider
 
         # Calls the GrowingSquare function to present the stimulus, and records the start time and phase start time.
-        trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, anxSlider, params, tracker)
+        trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, params)
         win.flip() # Flips the screen and waits for 2 seconds.
         core.wait(1)
 
@@ -934,9 +910,6 @@ for block in range(0, params['nBlocks']):
 
     ############################################
 
-    # Logs the history of the anxiety VAS ratings for this block.
-    logging.log(level=logging.DATA, msg='RatingScale %s: history=%s' % (anxSlider.name, anxSlider.getHistory()))
-
     # Randomize order of colors for next block (if there is a next block, meaning we are not in the end)
     if block < (params['nBlocks'] - 1):
         BetweenBlock(params)  # betweenblock message
@@ -950,7 +923,6 @@ for block in range(0, params['nBlocks']):
         print ("I got to the last if statement")
 
 
-anxSlider.autoDraw = False # This stops drawing the persistent VAS.
 WaitForFlipTime() #  This waits for the next screen refresh.
 
 RunMoodVas(questions_vas3, options_vas3, name='PostRun') # This displays a mood VAS after the experiment is completed.
