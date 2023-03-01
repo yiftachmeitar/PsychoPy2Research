@@ -82,7 +82,7 @@ params = {
 scriptName = 'Main.py'
 try:  # try to get a previous parameters file
     expInfo = fromFile('%s-lastExpInfo.psydat' % scriptName)
-    expInfo['session'] += 1  # automatically increment session number
+    expInfo['session'] = 1  # automatically increment session number
     expInfo['T2'] = 36.0
     expInfo['T4'] = 41.0
     expInfo['T6'] = 46.0
