@@ -24,7 +24,7 @@ from HelperFunctions import reverse_string
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 2,  # number of squares in each block
+    'nTrials': 8,  # number of squares in each block
     'nBlocks': 2,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
@@ -210,13 +210,13 @@ instructionsSlides = [image1, image2, image3]
 promptImage = 'TIMprompt2.jpg'
 stimImage = visual.ImageStim(win, pos=[0, 0], name='ImageStimulus', image=promptImage, units='pix')
 
-color_list = [1, 2, 3, 4, 1, 2, 3,4]  # 1-green, 2-yellow, 3-red, 4-black, ensure each color is presented twice at random per block
+color_list = [1, 2, 3, 4, 1, 2, 3,4]  # 1-white, 2-green, 3-yellow, 4-red, ensure each color is presented twice at random per block
 random.shuffle(color_list)
 
 # for "random" black heat - want 4 each of l,m,h
-randBlack = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
-random.shuffle(randBlack)
-randBlackCount = 0  # keep track of which black square we are in during task
+# randBlack = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
+# random.shuffle(randBlack)
+# randBlackCount = 0  # keep track of which black square we are in during task
 sleepRand = [0, 0.5, 1, 1.5, 2]  # slightly vary onset of heat pain
 
 # for "random" ITI avg 15 sec
@@ -290,25 +290,29 @@ def GrowingSquare(color, block, trial, params):
 
     # set color of square
     if color == 1:
+        col = 'white'
+        colCode = int('FFFFFF', 16)
+        colorName='White'
+    if color == 2:
         col = 'darkseagreen'
         colCode = int('8fbc8f', 16)
         colorName='Green'
-    elif color == 2:
+    elif color == 3:
         col = 'khaki'
         colCode = int('F0E68C', 16)
         colorName='Yellow'
-    elif color == 3:
+    elif color == 4:
         col = 'lightcoral'
         colCode = int('F08080', 16)
         colorName='Red'
-    elif color == 4:
-        col = 'black'
-        colCode = int('000000', 16)
-        colorName = 'Black'
+    # elif color == 4:
+    #     col = 'black'
+    #     colCode = int('000000', 16)
+    #     colorName = 'Black'
     else:
-        col = 'gray'
-        colCode = int('808080', 16)
-        colorName='Black'
+        col = 'white'
+        colCode = int('FFFFFF', 16)
+        colorName='White'
 
     trialStart = globalClock.getTime()
     phaseStart = globalClock.getTime()
@@ -398,7 +402,7 @@ def SetPortData(data):
 
 # use color, size, and block to calculate data for SetPortData
 def SetPort(color, size, block):
-    global randBlackCount
+    # global randBlackCount
     SetPortData((color - 1) * 6 ** 2 + (size - 1) * 6 + (block))
     if size == 1:
         if color == 1:
@@ -634,7 +638,7 @@ for block in range(0, params['nBlocks']):
         color = color_list[trial] # Selects the color for this trial.
 
         # Calls the GrowingSquare function to present the stimulus, and records the start time and phase start time.
-        trialStart, phaseStart = GrowingSquare(color_list[trial], block, trial, params)
+        trialStart, phaseStart = GrowingSquare(color, block, trial, params)
         win.flip() # Flips the screen and waits for 2 seconds.
         core.wait(1)
 
