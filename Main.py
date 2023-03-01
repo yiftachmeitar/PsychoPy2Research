@@ -24,7 +24,7 @@ from HelperFunctions import reverse_string
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 8,  # number of squares in each block
+    'nTrials': 2,  # number of squares in each block
     'nBlocks': 2,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
