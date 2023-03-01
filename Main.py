@@ -51,7 +51,7 @@ params = {
     # Name of text file containing mood Q&As presented after run
     'questionSelectKey': '3',  # select answer for VAS
     'questionSelectAdvances': True,  # will locking in an answer advance past an image rating?
-    'vasTextColor': 'dimgray',  # color of text in both VAS types (-1,-1,-1) = black
+    'vasTextColor': 'black',  # color of text in both VAS types (-1,-1,-1) = black
     'vasMarkerSize': 0.1,  # in norm units (2 = whole screen)
     'vasLabelYDist': 0.1,  # distance below line that VAS label/option text should be, in norm units
     # declare display parameters
