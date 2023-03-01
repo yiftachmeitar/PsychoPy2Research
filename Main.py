@@ -213,10 +213,6 @@ stimImage = visual.ImageStim(win, pos=[0, 0], name='ImageStimulus', image=prompt
 color_list = [1, 2, 3, 4, 1, 2, 3,4]  # 1-white, 2-green, 3-yellow, 4-red, ensure each color is presented twice at random per block
 random.shuffle(color_list)
 
-# for "random" black heat - want 4 each of l,m,h
-# randBlack = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
-# random.shuffle(randBlack)
-# randBlackCount = 0  # keep track of which black square we are in during task
 sleepRand = [0, 0.5, 1, 1.5, 2]  # slightly vary onset of heat pain
 
 # for "random" ITI avg 15 sec
@@ -305,10 +301,6 @@ def GrowingSquare(color, block, trial, params):
         col = 'lightcoral'
         colCode = int('F08080', 16)
         colorName='Red'
-    # elif color == 4:
-    #     col = 'black'
-    #     colCode = int('000000', 16)
-    #     colorName = 'Black'
     else:
         col = 'white'
         colCode = int('FFFFFF', 16)
@@ -402,7 +394,6 @@ def SetPortData(data):
 
 # use color, size, and block to calculate data for SetPortData
 def SetPort(color, size, block):
-    # global randBlackCount
     SetPortData((color - 1) * 6 ** 2 + (size - 1) * 6 + (block))
     if size == 1:
         if color == 1:
@@ -417,21 +408,6 @@ def SetPort(color, size, block):
         elif color == 4:
             code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T8']))]
             logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-
-        # FOR BLACK RANDOM - COMMENTED
-        # elif color == 4:
-        #     if randBlack[randBlackCount] == 2:
-        #         code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T6']))]
-        #         logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-        #         randBlackCount += 1
-        #     elif randBlack[randBlackCount] == 1:
-        #         code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T4']))]
-        #         logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-        #         randBlackCount += 1
-        #     elif randBlack[randBlackCount] == 0:
-        #         code = excelTemps[excelTemps['Temp'].astype(str).str.contains(str(expInfo['T2']))]
-        #         logging.log(level=logging.EXP, msg='set medoc %s' % (code.iat[0, 1]))
-        #         randBlackCount += 1
 
         if params['painSupport']:
             response = my_pathway.program(code.iat[0, 1])
