@@ -30,6 +30,7 @@ def ShowVAS(questions_list, options_list, win, name='Question', questionDur=floa
     else:
         upKey_attr = upKey
 
+    win.color = 'white' # Setting background color to white
     # Rating Scale Loop
     for iQ in range(nQuestions):
         # Make triangle
@@ -108,5 +109,5 @@ def ShowVAS(questions_list, options_list, win, name='Question', questionDur=floa
             logging.log(level=logging.DATA,msg='RatingScale %s: rating RT=%g'%(ratingScale.name,decisionTime[iQ]))
             logging.log(level=logging.DATA,msg='RatingScale %s: history=%s'%(ratingScale.name,choiceHistory[iQ]))
 
-
+    win.color = (217, 217, 217)
     return rating,decisionTime,choiceHistory
