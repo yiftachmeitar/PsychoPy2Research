@@ -24,8 +24,8 @@ from HelperFunctions import reverse_string
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 2,  # number of squares in each block
-    'nBlocks': 2,  # number of blocks (aka runs) - need time to move electrode in between
+    'nTrials': 5,  # number of squares in each block
+    'nBlocks': 8,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -62,7 +62,7 @@ params = {
     'screenColor': (217, 217, 217),  # in rgb255 space: (r,g,b) all between 0 and 255 - light grey
     # parallel port parameters
     'sendPortEvents': False,  # send event markers to biopac computer via parallel port
-    'portAddress': 0xE050,  # 0xE050,  0x0378,  address of parallel port
+    'portAddress': 20121,  # 0xE050,  0x0378,  address of parallel port
     'codeBaseline': 144,  # parallel port code for baseline period
     'codeFixation': 143,  # parallel port code for fixation period - safe
     'codeReady': 145,  # parallel port code for Get ready stimulus
@@ -146,7 +146,7 @@ if params['painSupport']:
 
 if params['painSupport']:
     # ip and port number from medoc application
-    my_pathway = Pathway(ip='10.150.254.8', port_number=20121)
+    my_pathway = Pathway(ip='10.31.187.58', port_number=20121)
 
     # Check status of medoc connection
     response = my_pathway.status()
