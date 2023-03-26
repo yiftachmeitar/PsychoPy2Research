@@ -21,11 +21,38 @@ from HelperFunctions import reverse_string
 # Save the parameters declared below?
 
 # Declare primary task parameters.
+def createPrintLogFile():
+    logging.flush()
+    with open(filename + '.log', "r", encoding='ascii', errors='ignore') as file:
+        items = []
+        for line in file:
+            row = []
+            split = line.split(" ")
+            row.append(split[0])
+            count = 0
+            to = 1
+            for i in split[1:]:
+                if not i == " ":
+                    if count == 1:
+                        break
+
+                    row.append(i[1:])
+                    count += 1
+                to += 1
+            b = " ".join(split[to:])
+            b = b[1:-1]
+            row.append(b)
+            items.append(row)
+
+    df2 = pd.DataFrame(items, columns=['Time', 'Level', 'msg'])
+    df2.to_csv('logPrints%s.csv' % expInfo['subject'])
+
+
 params = {
     # Declare stimulus and response parameters
     'screenIdx': 0,
-    'nTrials': 5,  # number of squares in each block
-    'nBlocks': 8,  # number of blocks (aka runs) - need time to move electrode in between
+    'nTrials': 1,  # number of squares in each block
+    'nBlocks': 1,  # number of blocks (aka runs) - need time to move electrode in between
     'painDur': 4,  # time of heat sensation (in seconds)
     'tStartup': 5,  # pause time before starting first stimulus
     # declare prompt and question files
@@ -493,6 +520,9 @@ def CoolDown():
 
     thisKey = event.waitKeys(keyList=['q', 'escape'])
 
+    # convert the log file into csv file
+    createPrintLogFile()
+
     # exit
     core.quit()
 
@@ -652,6 +682,8 @@ WaitForFlipTime() # This waits for the next screen refresh.
 logging.log(level=logging.EXP, msg='--- END EXPERIMENT ---')
 
 # clean-up & exit experiment
+
 CoolDown()
+
 
 
