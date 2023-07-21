@@ -1,5 +1,7 @@
 # PsychoPy2Research
+A repository for building a psychology experiment for stress and anxiety
 
+## Instructions
 
 ### Changes Needed in Main.py in Order to Connect to External Devices
 
