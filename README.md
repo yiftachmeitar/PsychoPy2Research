@@ -1,5 +1,5 @@
 # PsychoPy2Research
-A repository for building a psychology experiment for stress and anxiety
+A repository for building a psychology experiment for stress and anxiety, giving electrical shocks to the tested person and measuring his reactions, using PsychoPy library.
 
 ## Instructions
 
